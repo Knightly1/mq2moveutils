@@ -318,8 +318,8 @@ class CMUCharacter
 public:
     bool IsBard()
     {
-		auto pChar = GetCharInfo();
-		return pChar && pChar->pSpawn && pChar->pSpawn->mActorClient.Class == Bard;
+        auto pChar = GetCharInfo();
+        return pChar && pChar->pSpawn && pChar->pSpawn->mActorClient.Class == Bard;
     };
 
     bool InCombat()
@@ -2005,37 +2005,37 @@ void CMUActive::AggroTLO()
 class CMoveUtilsWnd : public CCustomWnd
 {
 public:
-	CStmlWnd* OutWnd;
+    CStmlWnd* OutWnd;
 
     CMoveUtilsWnd(const CXStr& Template) : CCustomWnd(Template)
     {
-		OutWnd = (CStmlWnd*)GetChildItem("CW_ChatOutput");
+        OutWnd = (CStmlWnd*)GetChildItem("CW_ChatOutput");
         OutWnd->SetClickable(1);
-		SetEscapable(0);
-		OutWnd->MaxLines = 0x190;
-		AddStyle(CWS_TITLE | CWS_MINIMIZE | CWS_RESIZEBORDER);
-		RemoveStyle(CWS_TRANSPARENT | CWS_CLOSE);
+        SetEscapable(0);
+        OutWnd->MaxLines = 0x190;
+        AddStyle(CWS_TITLE | CWS_MINIMIZE | CWS_RESIZEBORDER);
+        RemoveStyle(CWS_TRANSPARENT | CWS_CLOSE);
     };
 
     virtual int WndNotification(CXWnd* pWnd, unsigned int uiMessage, void* pData) override
     {
         if (pWnd == NULL && uiMessage == XWM_CLOSE)
         {
-			SetVisible(true);
+            SetVisible(true);
             return 0;
         }
         return CSidlScreenWnd::WndNotification(pWnd, uiMessage, pData);
     }
 
-	void Clear()
-	{
-		if (OutWnd)
-		{
-			OutWnd->SetSTMLText("");
-			OutWnd->ForceParseNow();
-			OutWnd->SetVScrollPos(OutWnd->GetVScrollMax());
-		}
-	}
+    void Clear()
+    {
+        if (OutWnd)
+        {
+            OutWnd->SetSTMLText("");
+            OutWnd->ForceParseNow();
+            OutWnd->SetVScrollPos(OutWnd->GetVScrollMax());
+        }
+    }
 };
 
 class CMUWndHandler
@@ -2107,26 +2107,26 @@ protected:
     {
         char szWindowText[MAX_STRING] = {0};
         OurWnd = new CMoveUtilsWnd(CXStr("ChatWindow"));
-		//left top right bottom
-		OurWnd->SetLocation({ (LONG)GetPrivateProfileInt(SET->SaveByChar ? szCharName : "Window", "ChatLeft",     10,   INIFileName),
-			(LONG)GetPrivateProfileInt(SET->SaveByChar ? szCharName : "Window", "ChatTop",      10,   INIFileName),
-			(LONG)GetPrivateProfileInt(SET->SaveByChar ? szCharName : "Window", "ChatRight",    410,  INIFileName),
-			(LONG)GetPrivateProfileInt(SET->SaveByChar ? szCharName : "Window", "ChatBottom",   210,  INIFileName) });
+        //left top right bottom
+        OurWnd->SetLocation({ (LONG)GetPrivateProfileInt(SET->SaveByChar ? szCharName : "Window", "ChatLeft",     10,   INIFileName),
+            (LONG)GetPrivateProfileInt(SET->SaveByChar ? szCharName : "Window", "ChatTop",      10,   INIFileName),
+            (LONG)GetPrivateProfileInt(SET->SaveByChar ? szCharName : "Window", "ChatRight",    410,  INIFileName),
+            (LONG)GetPrivateProfileInt(SET->SaveByChar ? szCharName : "Window", "ChatBottom",   210,  INIFileName) });
 
-		OurWnd->SetFades((GetPrivateProfileInt(SET->SaveByChar ? szCharName : "Window", "Fades",  0,    INIFileName) ? true:false));
+        OurWnd->SetFades((GetPrivateProfileInt(SET->SaveByChar ? szCharName : "Window", "Fades",  0,    INIFileName) ? true:false));
         OurWnd->SetAlpha(GetPrivateProfileInt(SET->SaveByChar ? szCharName : "Window", "Alpha",        255,  INIFileName));
         OurWnd->SetFadeToAlpha(GetPrivateProfileInt(SET->SaveByChar ? szCharName : "Window", "FadeToAlpha",  255,  INIFileName));
         OurWnd->SetFadeDuration(GetPrivateProfileInt(SET->SaveByChar ? szCharName : "Window", "Duration",     500,  INIFileName));
         OurWnd->SetLocked((GetPrivateProfileInt(SET->SaveByChar ? szCharName : "Window", "Locked", 0,    INIFileName) ? true:false));
         OurWnd->SetFadeDelay(GetPrivateProfileInt(SET->SaveByChar ? szCharName : "Window", "Delay",        2000, INIFileName));
         OurWnd->SetBGType(GetPrivateProfileInt(SET->SaveByChar ? szCharName : "Window", "BGType",       1,    INIFileName));
-		ARGBCOLOR col = { 0 };
+        ARGBCOLOR col = { 0 };
 
-		col.A       = GetPrivateProfileInt(SET->SaveByChar ? szCharName : "Window", "BGTint.alpha",   255,  INIFileName);
-		col.R       = GetPrivateProfileInt(SET->SaveByChar ? szCharName : "Window", "BGTint.red",   0,  INIFileName);
+        col.A       = GetPrivateProfileInt(SET->SaveByChar ? szCharName : "Window", "BGTint.alpha",   255,  INIFileName);
+        col.R       = GetPrivateProfileInt(SET->SaveByChar ? szCharName : "Window", "BGTint.red",   0,  INIFileName);
         col.G       = GetPrivateProfileInt(SET->SaveByChar ? szCharName : "Window", "BGTint.green", 0,  INIFileName);
         col.B       = GetPrivateProfileInt(SET->SaveByChar ? szCharName : "Window", "BGTint.blue",  0,  INIFileName);
-		OurWnd->SetBGColor(col.ARGB);
+        OurWnd->SetBGColor(col.ARGB);
 
         NewFont(GetPrivateProfileInt(SET->SaveByChar ? szCharName : "Window", "FontSize", 2, INIFileName));
         GetPrivateProfileString(SET->SaveByChar ? szCharName : "Window", "WindowTitle", "MoveUtils", szWindowText, MAX_STRING, INIFileName);
@@ -2139,26 +2139,26 @@ protected:
 
     void SaveWnd()
     {
-		char szSection[MAX_STRING] = { 0 };
-		strcpy_s(szSection, SET->SaveByChar ? szCharName : "Window");
-		WritePrivateProfileInt(   szSection, "ChatTop",      OurWnd->GetLocation().top,       INIFileName);
+        char szSection[MAX_STRING] = { 0 };
+        strcpy_s(szSection, SET->SaveByChar ? szCharName : "Window");
+        WritePrivateProfileInt(   szSection, "ChatTop",      OurWnd->GetLocation().top,       INIFileName);
         WritePrivateProfileInt(   szSection, "ChatBottom",   OurWnd->GetLocation().bottom,    INIFileName);
         WritePrivateProfileInt(   szSection, "ChatLeft",     OurWnd->GetLocation().left,      INIFileName);
-		WritePrivateProfileInt(   szSection, "ChatRight",    OurWnd->GetLocation().right,     INIFileName);
+        WritePrivateProfileInt(   szSection, "ChatRight",    OurWnd->GetLocation().right,     INIFileName);
         WritePrivateProfileInt(   szSection, "Fades",        OurWnd->GetFades(),              INIFileName);
         WritePrivateProfileInt(   szSection, "Alpha",        OurWnd->GetAlpha(),              INIFileName);
-		WritePrivateProfileInt(   szSection, "FadeToAlpha",  OurWnd->GetFadeToAlpha(),        INIFileName);
-		WritePrivateProfileInt(   szSection, "Duration",     OurWnd->GetFadeDuration(),       INIFileName);
+        WritePrivateProfileInt(   szSection, "FadeToAlpha",  OurWnd->GetFadeToAlpha(),        INIFileName);
+        WritePrivateProfileInt(   szSection, "Duration",     OurWnd->GetFadeDuration(),       INIFileName);
         WritePrivateProfileInt(   szSection, "Locked",       OurWnd->IsLocked(),              INIFileName);
         WritePrivateProfileInt(   szSection, "Delay",        OurWnd->GetFadeDelay(),          INIFileName);
         WritePrivateProfileInt(   szSection, "BGType",       OurWnd->GetBGType(),             INIFileName);
-		ARGBCOLOR col = { 0 };
-		col.ARGB = OurWnd->GetBGColor();
-		WritePrivateProfileInt(   szSection, "BGTint.alpha", static_cast<int>(col.A),         INIFileName);
-		WritePrivateProfileInt(   szSection, "BGTint.red",   static_cast<int>(col.R),         INIFileName);
-		WritePrivateProfileInt(   szSection, "BGTint.green", static_cast<int>(col.G),         INIFileName);
+        ARGBCOLOR col = { 0 };
+        col.ARGB = OurWnd->GetBGColor();
+        WritePrivateProfileInt(   szSection, "BGTint.alpha", static_cast<int>(col.A),         INIFileName);
+        WritePrivateProfileInt(   szSection, "BGTint.red",   static_cast<int>(col.R),         INIFileName);
+        WritePrivateProfileInt(   szSection, "BGTint.green", static_cast<int>(col.G),         INIFileName);
         WritePrivateProfileInt(   szSection, "BGTint.blue",  static_cast<int>(col.B),         INIFileName);
-		WritePrivateProfileInt(   szSection, "FontSize",     static_cast<int>(FontSize),      INIFileName);
+        WritePrivateProfileInt(   szSection, "FontSize",     static_cast<int>(FontSize),      INIFileName);
 
         WritePrivateProfileString(szSection, "WindowTitle",  OurWnd->GetWindowText().c_str(), INIFileName);
     };
@@ -2177,16 +2177,16 @@ protected:
 
     void SetFontSize(int uiSize)
     {
-		if (uiSize < 0 || uiSize > pWndMgr->FontsArray.GetCount())
-			return;
+        if (uiSize < 0 || uiSize > pWndMgr->FontsArray.GetCount())
+            return;
 
-		CXStr ContStr(OurWnd->OutWnd->GetSTMLText());
-		OurWnd->OutWnd->SetFont(pWndMgr->FontsArray[uiSize]);
-		OurWnd->OutWnd->SetSTMLText(ContStr, 1, 0);
-		OurWnd->OutWnd->ForceParseNow();
-		OurWnd->OutWnd->SetVScrollPos(OurWnd->OutWnd->GetVScrollMax());
+        CXStr ContStr(OurWnd->OutWnd->GetSTMLText());
+        OurWnd->OutWnd->SetFont(pWndMgr->FontsArray[uiSize]);
+        OurWnd->OutWnd->SetSTMLText(ContStr, 1, 0);
+        OurWnd->OutWnd->ForceParseNow();
+        OurWnd->OutWnd->SetVScrollPos(OurWnd->OutWnd->GetVScrollMax());
 
-		FontSize = uiSize;
+        FontSize = uiSize;
     };
 
     CMoveUtilsWnd* OurWnd;
@@ -2370,14 +2370,14 @@ public:
 
     bool ToString(MQVarPtr VarPtr, char* Destination) override
     {
-		strcpy_s(Destination, MAX_STRING, "OFF");
+        strcpy_s(Destination, MAX_STRING, "OFF");
         if (PAUSE->PausedMU || PAUSE->PausedCmd)
         {
-			strcpy_s(Destination, MAX_STRING, "PAUSED");
+            strcpy_s(Destination, MAX_STRING, "PAUSED");
         }
         else if (CURCAMP->On)
         {
-			strcpy_s(Destination, MAX_STRING, "ON");
+            strcpy_s(Destination, MAX_STRING, "ON");
         }
         return true;
     }
@@ -2536,14 +2536,14 @@ public:
 
     bool ToString(MQVarPtr VarPtr, char* Destination) override
     {
-		strcpy_s(Destination, MAX_STRING, "OFF");
+        strcpy_s(Destination, MAX_STRING, "OFF");
         if (PAUSE->PausedMU || PAUSE->PausedCmd)
         {
-			strcpy_s(Destination, MAX_STRING, "PAUSED");
+            strcpy_s(Destination, MAX_STRING, "PAUSED");
         }
         else if (STICK->On)
         {
-			strcpy_s(Destination, MAX_STRING, "ON");
+            strcpy_s(Destination, MAX_STRING, "ON");
         }
 
         return true;
@@ -2636,14 +2636,14 @@ public:
 
     virtual bool ToString(MQVarPtr VarPtr, char* Destination) override
     {
-		strcpy_s(Destination, MAX_STRING, "OFF");
+        strcpy_s(Destination, MAX_STRING, "OFF");
         if (PAUSE->PausedMU || PAUSE->PausedCmd)
         {
-			strcpy_s(Destination, MAX_STRING, "PAUSED");
+            strcpy_s(Destination, MAX_STRING, "PAUSED");
         }
         else if (MOVETO->On)
         {
-			strcpy_s(Destination, MAX_STRING, "ON");
+            strcpy_s(Destination, MAX_STRING, "ON");
         }
 
         return true;
@@ -2753,14 +2753,14 @@ public:
 
     virtual bool ToString(MQVarPtr VarPtr, char* Destination) override
     {
-		strcpy_s(Destination, MAX_STRING, "OFF");
+        strcpy_s(Destination, MAX_STRING, "OFF");
         if (PAUSE->PausedMU || PAUSE->PausedCmd)
         {
-			strcpy_s(Destination, MAX_STRING, "PAUSED");
+            strcpy_s(Destination, MAX_STRING, "PAUSED");
         }
         else if (CIRCLE->On)
         {
-			strcpy_s(Destination, MAX_STRING, "ON");
+            strcpy_s(Destination, MAX_STRING, "ON");
         }
         return true;
     }
@@ -2920,18 +2920,18 @@ public:
 
     virtual bool ToString(MQVarPtr VarPtr, char* Destination) override
     {
-		strcpy_s(Destination, MAX_STRING, "NONE");
+        strcpy_s(Destination, MAX_STRING, "NONE");
         if (STICK->On)
         {
-			strcpy_s(Destination, MAX_STRING, "STICK");
+            strcpy_s(Destination, MAX_STRING, "STICK");
         }
         else if (CIRCLE->On)
         {
-			strcpy_s(Destination, MAX_STRING, "CIRCLE");
+            strcpy_s(Destination, MAX_STRING, "CIRCLE");
         }
         else if (MOVETO->On)
         {
-			strcpy_s(Destination, MAX_STRING, "MOVETO");
+            strcpy_s(Destination, MAX_STRING, "MOVETO");
         }
         else if (CURCAMP->On)
         {
@@ -2977,7 +2977,7 @@ void __stdcall CheckAggro_Event(unsigned int ID, void *pData, PBLECHVALUE pValue
 void __stdcall CheckGates_Event(unsigned int ID, void *pData, PBLECHVALUE pValues)
 {
     if (!ValidIngame() || !STICK->On || !STICK->BreakGate)
-		return;
+        return;
     PlayerClient* psTarget = (STICK->Hold && STICK->HoldID != 0) ? GetSpawnByID(STICK->HoldID) : pTarget;
     if (psTarget && pValues)
     {
@@ -2997,57 +2997,57 @@ void SetupEvents(bool bAddEvent, bool bForceRemove)
         if (SET_M->BreakHit || MOVETO->BreakHit || SET_S->BreakHit || STICK->BreakHit)
         {
             if (!Event_AggroNorm)
-				Event_AggroNorm    = pMoveEvent->AddEvent("#Name# #Hurts# YOU for #Damage#",          CheckAggro_Event);
+                Event_AggroNorm    = pMoveEvent->AddEvent("#Name# #Hurts# YOU for #Damage#",          CheckAggro_Event);
             if (!Event_MissNorm)
-				Event_MissNorm     = pMoveEvent->AddEvent("#Name# tries to #Hit# YOU, but #YouRock#", CheckAggro_Event);
+                Event_MissNorm     = pMoveEvent->AddEvent("#Name# tries to #Hit# YOU, but #YouRock#", CheckAggro_Event);
             if (!Event_AggroAbbrev)
-				Event_AggroAbbrev  = pMoveEvent->AddEvent("#Name# #Hurt#s for #Damage#",              CheckAggro_Event);
+                Event_AggroAbbrev  = pMoveEvent->AddEvent("#Name# #Hurt#s for #Damage#",              CheckAggro_Event);
             if (!Event_MissAbbrev)
-				Event_MissAbbrev   = pMoveEvent->AddEvent("#Name# missed",                            CheckAggro_Event);
+                Event_MissAbbrev   = pMoveEvent->AddEvent("#Name# missed",                            CheckAggro_Event);
             if (!Event_MissNumOnly)
-				Event_MissNumOnly  = pMoveEvent->AddEvent("miss",                                     CheckAggro_Event);
+                Event_MissNumOnly  = pMoveEvent->AddEvent("miss",                                     CheckAggro_Event);
             // not going to parse for just numbers as that would require parsing every line
             // and evaluating if its only numerical - this would be a bit over the top
         }
         if (SET_S->BreakGate || STICK->BreakGate)
         {
             if (!Event_Gates)
-				Event_Gates = pMoveEvent->AddEvent("#Name# Gates.",CheckGates_Event);
+                Event_Gates = pMoveEvent->AddEvent("#Name# Gates.",CheckGates_Event);
         }
     }
     else
     {
-		if (pMoveEvent) {
-			if (bForceRemove || (!SET_M->BreakHit && !SET_S->BreakHit))
-			{
-				if (Event_AggroNorm)
-					pMoveEvent->RemoveEvent(Event_AggroNorm);
-				Event_AggroNorm = NULL;
+        if (pMoveEvent) {
+            if (bForceRemove || (!SET_M->BreakHit && !SET_S->BreakHit))
+            {
+                if (Event_AggroNorm)
+                    pMoveEvent->RemoveEvent(Event_AggroNorm);
+                Event_AggroNorm = NULL;
 
-				if (Event_MissNorm)
-					pMoveEvent->RemoveEvent(Event_MissNorm);
-				Event_MissNorm = NULL;
+                if (Event_MissNorm)
+                    pMoveEvent->RemoveEvent(Event_MissNorm);
+                Event_MissNorm = NULL;
 
-				if (Event_AggroAbbrev)
-					pMoveEvent->RemoveEvent(Event_AggroAbbrev);
-				Event_AggroAbbrev = NULL;
+                if (Event_AggroAbbrev)
+                    pMoveEvent->RemoveEvent(Event_AggroAbbrev);
+                Event_AggroAbbrev = NULL;
 
-				if (Event_MissAbbrev)
-					pMoveEvent->RemoveEvent(Event_MissAbbrev);
-				Event_MissAbbrev = NULL;
+                if (Event_MissAbbrev)
+                    pMoveEvent->RemoveEvent(Event_MissAbbrev);
+                Event_MissAbbrev = NULL;
 
-				if (Event_MissNumOnly)
-					pMoveEvent->RemoveEvent(Event_MissNumOnly);
-				Event_MissNumOnly = NULL;
-			}
-			if (bForceRemove || !SET_S->BreakGate)
-			{
-				if (Event_Gates) {
-					pMoveEvent->RemoveEvent(Event_Gates);
-					Event_Gates = NULL;
-				}
-			}
-		}
+                if (Event_MissNumOnly)
+                    pMoveEvent->RemoveEvent(Event_MissNumOnly);
+                Event_MissNumOnly = NULL;
+            }
+            if (bForceRemove || !SET_S->BreakGate)
+            {
+                if (Event_Gates) {
+                    pMoveEvent->RemoveEvent(Event_Gates);
+                    Event_Gates = NULL;
+                }
+            }
+        }
     }
 }
 
@@ -3574,7 +3574,7 @@ void HandleOurCmd(unsigned char ucCmdUsed, char* szInput)
             GetArg(szCurrentArg, szInput, uiArgNum++);
             if (isdigit(szCurrentArg[0]) || szCurrentArg[0] == '-' || szCurrentArg[0] == '.' )
             {
-				float fValue = GetFloatFromString(szCurrentArg, 0.0f);
+                float fValue = GetFloatFromString(szCurrentArg, 0.0f);
                 if (bUsingY)
                 {
                     MOVETO->Activate(fValue, pChSpawn->X, 0.0f);
@@ -3717,7 +3717,7 @@ void HandleOurCmd(unsigned char ucCmdUsed, char* szInput)
             }
             else if (isdigit(szCurrentArg[0]) || szCurrentArg[0] == '.' )
             {
-				float fResult = GetFloatFromString(szCurrentArg, 0.0f) * STICK->DistModP + STICK->DistMod;
+                float fResult = GetFloatFromString(szCurrentArg, 0.0f) * STICK->DistModP + STICK->DistMod;
                 if (fResult > 0.0f)
                 {
                     STICK->Dist = fStickDistance = fResult;
@@ -3923,7 +3923,7 @@ void HandleOurCmd(unsigned char ucCmdUsed, char* szInput)
             else if (!_strnicmp(szCurrentArg, "backupdist", 11))
             {
                 GetArg(szCurrentArg, szInput, uiArgNum++);
-				float fValue = GetFloatFromString(szCurrentArg, 0.0f);
+                float fValue = GetFloatFromString(szCurrentArg, 0.0f);
                 if (fValue > 1.0f)
                 {
                     STICK->DistBack = fValue;
@@ -3940,7 +3940,7 @@ void HandleOurCmd(unsigned char ucCmdUsed, char* szInput)
             else if (!_strnicmp(szCurrentArg, "breakdist", 10))
             {
                 GetArg(szCurrentArg, szInput, uiArgNum++);
-				float fValue = GetFloatFromString(szCurrentArg, 0.0f);
+                float fValue = GetFloatFromString(szCurrentArg, 0.0f);
                 if (fValue > 1.0f)
                 {
                     STICK->DistBreak = fValue;
@@ -3956,7 +3956,7 @@ void HandleOurCmd(unsigned char ucCmdUsed, char* szInput)
             else if (!_strnicmp(szCurrentArg, "snapdist", 9))
             {
                 GetArg(szCurrentArg, szInput, uiArgNum++);
-				float fValue = GetFloatFromString(szCurrentArg, 0.0f);
+                float fValue = GetFloatFromString(szCurrentArg, 0.0f);
                 if (fValue > 1.0f)
                 {
                     STICK->DistSnap = fValue;
@@ -3973,7 +3973,7 @@ void HandleOurCmd(unsigned char ucCmdUsed, char* szInput)
             else if (!_strnicmp(szCurrentArg, "flexdist", 9))
             {
                 GetArg(szCurrentArg, szInput, uiArgNum++);
-				float fValue = GetFloatFromString(szCurrentArg, 0.0f);
+                float fValue = GetFloatFromString(szCurrentArg, 0.0f);
                 if (fValue >= 2.0f && fValue <= 20.0f)
                 {
                     STICK->DistFlex = fValue;
@@ -3990,7 +3990,7 @@ void HandleOurCmd(unsigned char ucCmdUsed, char* szInput)
             else if (!_strnicmp(szCurrentArg, "!frontarc", 10))
             {
                 GetArg(szCurrentArg, szInput, uiArgNum++);
-				float fArg = GetFloatFromString(szCurrentArg, 0.0f);
+                float fArg = GetFloatFromString(szCurrentArg, 0.0f);
                 if (fArg > 1.0f && fArg <= 260.0f)
                 {
                     STICK->ArcNotFront = fArg;
@@ -4007,7 +4007,7 @@ void HandleOurCmd(unsigned char ucCmdUsed, char* szInput)
             else if (!_strnicmp(szCurrentArg, "behindarc", 10))
             {
                 GetArg(szCurrentArg, szInput, uiArgNum++);
-				float fArg = GetFloatFromString(szCurrentArg, 0.0f);
+                float fArg = GetFloatFromString(szCurrentArg, 0.0f);
                 if (fArg > 1.0f && fArg <= 260.0f)
                 {
                     STICK->ArcBehind = fArg;
@@ -4050,7 +4050,7 @@ void HandleOurCmd(unsigned char ucCmdUsed, char* szInput)
             else if (!_strnicmp(szCurrentArg, "dist", 5))
             {
                 GetArg(szCurrentArg, szInput, uiArgNum++);
-				float fArg = GetFloatFromString(szCurrentArg, 0.0f);
+                float fArg = GetFloatFromString(szCurrentArg, 0.0f);
                 if (szCurrentArg[0] == '-')
                 {
                     MOVETO->Mod = fArg;
@@ -4075,7 +4075,7 @@ void HandleOurCmd(unsigned char ucCmdUsed, char* szInput)
             else if (!_strnicmp(szCurrentArg, "mdist", 6))
             {
                 GetArg(szCurrentArg, szInput, uiArgNum++);
-				float fValue = GetFloatFromString(szCurrentArg, 0.0f);
+                float fValue = GetFloatFromString(szCurrentArg, 0.0f);
                 if (szCurrentArg[0] == '-')
                 {
                     MOVETO->Mod = fValue;
@@ -4083,7 +4083,7 @@ void HandleOurCmd(unsigned char ucCmdUsed, char* szInput)
                 }
                 else if (isdigit(szCurrentArg[0]))
                 {
-					float fvalue = fValue;
+                    float fvalue = fValue;
                     MOVETO->Dist = (fvalue >= 1.0f) ? fvalue : MOVETO->Dist;
                 }
                 else
@@ -4130,7 +4130,7 @@ void HandleOurCmd(unsigned char ucCmdUsed, char* szInput)
             else if (!_strnicmp(szCurrentArg, "backupdist", 11))
             {
                 GetArg(szCurrentArg, szInput, uiArgNum++);
-				float fValue = GetFloatFromString(szCurrentArg, 0.0f);
+                float fValue = GetFloatFromString(szCurrentArg, 0.0f);
                 if (fValue > 1.0f)
                 {
                     MOVETO->DistBack = fValue;
@@ -4145,7 +4145,7 @@ void HandleOurCmd(unsigned char ucCmdUsed, char* szInput)
             else if (!_strnicmp(szCurrentArg, "ydist", 6))
             {
                 GetArg(szCurrentArg, szInput, uiArgNum++);
-				float fValue = GetFloatFromString(szCurrentArg, 0.0f);
+                float fValue = GetFloatFromString(szCurrentArg, 0.0f);
                 if (fValue > 1.0f)
                 {
                     MOVETO->DistY = fValue;
@@ -4160,7 +4160,7 @@ void HandleOurCmd(unsigned char ucCmdUsed, char* szInput)
             else if (!_strnicmp(szCurrentArg, "xdist", 6))
             {
                 GetArg(szCurrentArg, szInput, uiArgNum++);
-				float fValue = GetFloatFromString(szCurrentArg, 0.0f);
+                float fValue = GetFloatFromString(szCurrentArg, 0.0f);
                 if (fValue > 1.0f)
                 {
                     MOVETO->DistX = fValue;
@@ -4331,7 +4331,7 @@ void HandleOurCmd(unsigned char ucCmdUsed, char* szInput)
             else if (!_strnicmp(szCurrentArg, "scatsize", 9))
             {
                 GetArg(szCurrentArg, szInput, uiArgNum++);
-				float fValue = GetFloatFromString(szCurrentArg, 0.0f);
+                float fValue = GetFloatFromString(szCurrentArg, 0.0f);
                 if (fValue > 1.0f)
                 {
                     CURCAMP->ScatSize = fValue;
@@ -4347,7 +4347,7 @@ void HandleOurCmd(unsigned char ucCmdUsed, char* szInput)
             else if (!_strnicmp(szCurrentArg, "scatdist", 9))
             {
                 GetArg(szCurrentArg, szInput, uiArgNum++);
-				float fValue = GetFloatFromString(szCurrentArg, 0.0f);
+                float fValue = GetFloatFromString(szCurrentArg, 0.0f);
                 if (fValue > 1.0f)
                 {
                     CURCAMP->ScatDist = fValue;
@@ -4656,114 +4656,114 @@ bool ToggleSetting(const char* pszToggleOutput, bool* pbEvalThis, bool* pbUsedTo
 
 void SaveConfigSetting(BYTE ucCmdUsed,char*Value,char*)
 {
-	char szSection[MAX_STRING];
-	char szTemp[MAX_STRING];
-	switch(ucCmdUsed)
+    char szSection[MAX_STRING];
+    char szTemp[MAX_STRING];
+    switch(ucCmdUsed)
     {
     case CMD_MAKECAMP:
-		strcpy_s(szSection, "MakeCamp");
-		WritePrivateProfileFloat( szSection,   "CampRadius",             SET_CAMP->Radius,                                                                                            INIFileName);
-		WritePrivateProfileInt(   szSection,   "MinDelay",               SET_CAMP->Min,                                                                                               INIFileName);
-		WritePrivateProfileInt(   szSection,   "MaxDelay",               SET_CAMP->Max,                                                                                               INIFileName);
-		WritePrivateProfileString(szSection,   "RealtimePlayer",         SET_CAMP->Realtime                                     ? "on" : "off",                                       INIFileName);
-		WritePrivateProfileString(szSection,   "ReturnHaveTarget",       SET_CAMP->HaveTarget                                   ? "on" : "off",                                       INIFileName);
-		WritePrivateProfileString(szSection,   "ReturnNoAggro",          SET_CAMP->NoAggro                                      ? "on" : "off",                                       INIFileName);
-		WritePrivateProfileString(szSection,   "ReturnNotLooting",       SET_CAMP->NotLoot                                      ? "on" : "off",                                       INIFileName);
-		WritePrivateProfileString(szSection,   "UseLeash",               SET_CAMP->Leash                                        ? "on" : "off",                                       INIFileName);
-		WritePrivateProfileFloat( szSection,   "LeashLength",            SET_CAMP->Length,                                                                                            INIFileName);
-		WritePrivateProfileString(szSection,   "UseScatter",             SET_CAMP->Scatter                                      ? "on" : "off",                                       INIFileName);
-		WritePrivateProfileFloat( szSection,   "Bearing",                SET_CAMP->Bearing,                                                                                           INIFileName);
-		WritePrivateProfileFloat( szSection,   "ScatDist",               SET_CAMP->ScatDist,                                                                                          INIFileName);
-		WritePrivateProfileFloat( szSection,   "ScatSize",               SET_CAMP->ScatSize,                                                                                          INIFileName);
-		break;
+        strcpy_s(szSection, "MakeCamp");
+        WritePrivateProfileFloat( szSection,   "CampRadius",             SET_CAMP->Radius,                                                                                            INIFileName);
+        WritePrivateProfileInt(   szSection,   "MinDelay",               SET_CAMP->Min,                                                                                               INIFileName);
+        WritePrivateProfileInt(   szSection,   "MaxDelay",               SET_CAMP->Max,                                                                                               INIFileName);
+        WritePrivateProfileString(szSection,   "RealtimePlayer",         SET_CAMP->Realtime                                     ? "on" : "off",                                       INIFileName);
+        WritePrivateProfileString(szSection,   "ReturnHaveTarget",       SET_CAMP->HaveTarget                                   ? "on" : "off",                                       INIFileName);
+        WritePrivateProfileString(szSection,   "ReturnNoAggro",          SET_CAMP->NoAggro                                      ? "on" : "off",                                       INIFileName);
+        WritePrivateProfileString(szSection,   "ReturnNotLooting",       SET_CAMP->NotLoot                                      ? "on" : "off",                                       INIFileName);
+        WritePrivateProfileString(szSection,   "UseLeash",               SET_CAMP->Leash                                        ? "on" : "off",                                       INIFileName);
+        WritePrivateProfileFloat( szSection,   "LeashLength",            SET_CAMP->Length,                                                                                            INIFileName);
+        WritePrivateProfileString(szSection,   "UseScatter",             SET_CAMP->Scatter                                      ? "on" : "off",                                       INIFileName);
+        WritePrivateProfileFloat( szSection,   "Bearing",                SET_CAMP->Bearing,                                                                                           INIFileName);
+        WritePrivateProfileFloat( szSection,   "ScatDist",               SET_CAMP->ScatDist,                                                                                          INIFileName);
+        WritePrivateProfileFloat( szSection,   "ScatSize",               SET_CAMP->ScatSize,                                                                                          INIFileName);
+        break;
     case CMD_STICK:
-		strcpy_s(szSection, "Stick");
-		WritePrivateProfileString(szSection,   "AlwaysUW",               SET_S->UW                                              ? "on" : "off",                                       INIFileName);
-		WritePrivateProfileString(szSection,   "AwareNotAggro",          SET->Spin                                              ? "on" : "off",                                       INIFileName);
-		WritePrivateProfileFloat( szSection,   "ArcBehind",              SET_S->ArcBehind,                                                                                            INIFileName);
-		WritePrivateProfileFloat( szSection,   "ArcNotFront",            SET_S->ArcNotFront,                                                                                          INIFileName);
-		WritePrivateProfileString(szSection,   "BreakOnGate",            SET_S->BreakGate                                       ? "on" : "off",                                       INIFileName);
-		WritePrivateProfileString(szSection,   "BreakOnHit",             SET_S->BreakHit                                        ? "on" : "off",                                       INIFileName);
-		WritePrivateProfileString(szSection,   "BreakOnTarget",          SET_S->BreakTarget                                     ? "on" : "off",                                       INIFileName);
-		WritePrivateProfileString(szSection,   "BreakOnWarp",            SET_S->BreakWarp                                       ? "on" : "off",                                       INIFileName);
-		WritePrivateProfileString(szSection,   "PauseOnWarp",            SET_S->PauseWarp                                       ? "on" : "off",                                       INIFileName);
-		WritePrivateProfileString(szSection,   "DelayStrafe",            SET_S->DelayStrafe                                     ? "on" : "off",                                       INIFileName);
-		WritePrivateProfileFloat( szSection,   "DistBackup",             SET_S->DistBack,                                                                                             INIFileName);
-		WritePrivateProfileFloat( szSection,   "DistBreak",              SET_S->DistBreak,                                                                                            INIFileName);
-		WritePrivateProfileFloat( szSection,   "DistFlex",               SET_S->DistFlex,                                                                                             INIFileName);
-		WritePrivateProfileFloat( szSection,   "DistMod",                SET_S->DistMod,                                                                                              INIFileName);
-		WritePrivateProfileFloat( szSection,   "DistMod%",               SET_S->DistModP,                                                                                             INIFileName);
-		WritePrivateProfileFloat( szSection,   "DistSnaproll",           SET_S->DistSnap,                                                                                             INIFileName);
-		WritePrivateProfileString(szSection,   "RandomArc",              SET_S->Randomize                                       ? "on" : "off",                                       INIFileName);
-		WritePrivateProfileInt(   szSection,   "StrafeMinDelay",         SET_S->Min,                                                                                                  INIFileName);
-		WritePrivateProfileInt(   szSection,   "StrafeMaxDelay",         SET_S->Max,                                                                                                  INIFileName);
-		WritePrivateProfileString(szSection,   "UseBackward",            SET_S->UseBack                                         ? "on" : "off",                                       INIFileName);
-		WritePrivateProfileString(szSection,   "UseFleeing",             SET_S->UseFleeing                                      ? "on" : "off",                                       INIFileName);
-		WritePrivateProfileString(szSection,   "UseFlex",                SET_S->Flex                                            ? "on" : "off",                                       INIFileName);
-		WritePrivateProfileString(szSection,   "UseWalk",                SET_S->Walk                                            ? "on" : "off",                                       INIFileName);
+        strcpy_s(szSection, "Stick");
+        WritePrivateProfileString(szSection,   "AlwaysUW",               SET_S->UW                                              ? "on" : "off",                                       INIFileName);
+        WritePrivateProfileString(szSection,   "AwareNotAggro",          SET->Spin                                              ? "on" : "off",                                       INIFileName);
+        WritePrivateProfileFloat( szSection,   "ArcBehind",              SET_S->ArcBehind,                                                                                            INIFileName);
+        WritePrivateProfileFloat( szSection,   "ArcNotFront",            SET_S->ArcNotFront,                                                                                          INIFileName);
+        WritePrivateProfileString(szSection,   "BreakOnGate",            SET_S->BreakGate                                       ? "on" : "off",                                       INIFileName);
+        WritePrivateProfileString(szSection,   "BreakOnHit",             SET_S->BreakHit                                        ? "on" : "off",                                       INIFileName);
+        WritePrivateProfileString(szSection,   "BreakOnTarget",          SET_S->BreakTarget                                     ? "on" : "off",                                       INIFileName);
+        WritePrivateProfileString(szSection,   "BreakOnWarp",            SET_S->BreakWarp                                       ? "on" : "off",                                       INIFileName);
+        WritePrivateProfileString(szSection,   "PauseOnWarp",            SET_S->PauseWarp                                       ? "on" : "off",                                       INIFileName);
+        WritePrivateProfileString(szSection,   "DelayStrafe",            SET_S->DelayStrafe                                     ? "on" : "off",                                       INIFileName);
+        WritePrivateProfileFloat( szSection,   "DistBackup",             SET_S->DistBack,                                                                                             INIFileName);
+        WritePrivateProfileFloat( szSection,   "DistBreak",              SET_S->DistBreak,                                                                                            INIFileName);
+        WritePrivateProfileFloat( szSection,   "DistFlex",               SET_S->DistFlex,                                                                                             INIFileName);
+        WritePrivateProfileFloat( szSection,   "DistMod",                SET_S->DistMod,                                                                                              INIFileName);
+        WritePrivateProfileFloat( szSection,   "DistMod%",               SET_S->DistModP,                                                                                             INIFileName);
+        WritePrivateProfileFloat( szSection,   "DistSnaproll",           SET_S->DistSnap,                                                                                             INIFileName);
+        WritePrivateProfileString(szSection,   "RandomArc",              SET_S->Randomize                                       ? "on" : "off",                                       INIFileName);
+        WritePrivateProfileInt(   szSection,   "StrafeMinDelay",         SET_S->Min,                                                                                                  INIFileName);
+        WritePrivateProfileInt(   szSection,   "StrafeMaxDelay",         SET_S->Max,                                                                                                  INIFileName);
+        WritePrivateProfileString(szSection,   "UseBackward",            SET_S->UseBack                                         ? "on" : "off",                                       INIFileName);
+        WritePrivateProfileString(szSection,   "UseFleeing",             SET_S->UseFleeing                                      ? "on" : "off",                                       INIFileName);
+        WritePrivateProfileString(szSection,   "UseFlex",                SET_S->Flex                                            ? "on" : "off",                                       INIFileName);
+        WritePrivateProfileString(szSection,   "UseWalk",                SET_S->Walk                                            ? "on" : "off",                                       INIFileName);
         break;
     case CMD_MOVETO:
-		strcpy_s(szSection, "MoveTo");
-		WritePrivateProfileString(szSection,   "AlwaysUW",               SET_M->UW                                              ? "on" : "off",                                       INIFileName);
-		WritePrivateProfileFloat( szSection,   "ArrivalDist",            SET_M->Dist,                                                                                                 INIFileName);
-		WritePrivateProfileFloat( szSection,   "ArrivalDistX",           SET_M->DistX,                                                                                                INIFileName);
-		WritePrivateProfileFloat( szSection,   "ArrivalDistY",           SET_M->DistY,                                                                                                INIFileName);
-		WritePrivateProfileString(szSection,   "BreakOnAggro",           SET_M->BreakAggro                                      ? "on" : "off",                                       INIFileName);
-		WritePrivateProfileString(szSection,   "BreakOnHit",             SET_M->BreakHit                                        ? "on" : "off",                                       INIFileName);
-		WritePrivateProfileFloat( szSection,   "DistBackup",             SET_M->DistBack,                                                                                             INIFileName);
-		WritePrivateProfileFloat( szSection,   "MoveToMod",              SET_M->Mod,                                                                                                  INIFileName);
-		WritePrivateProfileString(szSection,   "UseBackward",            SET_M->UseBack                                         ? "on" : "off",                                       INIFileName);
-		WritePrivateProfileString(szSection,   "UseWalk",                SET_M->Walk                                            ? "on" : "off",                                       INIFileName);
+        strcpy_s(szSection, "MoveTo");
+        WritePrivateProfileString(szSection,   "AlwaysUW",               SET_M->UW                                              ? "on" : "off",                                       INIFileName);
+        WritePrivateProfileFloat( szSection,   "ArrivalDist",            SET_M->Dist,                                                                                                 INIFileName);
+        WritePrivateProfileFloat( szSection,   "ArrivalDistX",           SET_M->DistX,                                                                                                INIFileName);
+        WritePrivateProfileFloat( szSection,   "ArrivalDistY",           SET_M->DistY,                                                                                                INIFileName);
+        WritePrivateProfileString(szSection,   "BreakOnAggro",           SET_M->BreakAggro                                      ? "on" : "off",                                       INIFileName);
+        WritePrivateProfileString(szSection,   "BreakOnHit",             SET_M->BreakHit                                        ? "on" : "off",                                       INIFileName);
+        WritePrivateProfileFloat( szSection,   "DistBackup",             SET_M->DistBack,                                                                                             INIFileName);
+        WritePrivateProfileFloat( szSection,   "MoveToMod",              SET_M->Mod,                                                                                                  INIFileName);
+        WritePrivateProfileString(szSection,   "UseBackward",            SET_M->UseBack                                         ? "on" : "off",                                       INIFileName);
+        WritePrivateProfileString(szSection,   "UseWalk",                SET_M->Walk                                            ? "on" : "off",                                       INIFileName);
         break;
     case CMD_CIRCLE:
-		strcpy_s(szSection, "Circle");
-		WritePrivateProfileString(szSection,   "Backward",               SET_C->Backward                                        ? "on" : "off",                                       INIFileName);
-		WritePrivateProfileString(szSection,   "CCW",                    SET_C->CCW                                             ? "on" : "off",                                       INIFileName);
-		WritePrivateProfileString(szSection,   "Drunken",                SET_C->Drunk                                           ? "on" : "off",                                       INIFileName);
-		WritePrivateProfileFloat( szSection,   "RadiusSize",             SET_C->Radius,                                                                                               INIFileName);
+        strcpy_s(szSection, "Circle");
+        WritePrivateProfileString(szSection,   "Backward",               SET_C->Backward                                        ? "on" : "off",                                       INIFileName);
+        WritePrivateProfileString(szSection,   "CCW",                    SET_C->CCW                                             ? "on" : "off",                                       INIFileName);
+        WritePrivateProfileString(szSection,   "Drunken",                SET_C->Drunk                                           ? "on" : "off",                                       INIFileName);
+        WritePrivateProfileFloat( szSection,   "RadiusSize",             SET_C->Radius,                                                                                               INIFileName);
         break;
     default:
-		strcpy_s(szSection, "Defaults");
-		WritePrivateProfileFloat( szSection,   "AllowMove",              SET->AllowMove,                                                                                              INIFileName);
-		WritePrivateProfileString(szSection,   "AutoPause",              SET->AutoPause                                         ? "on" : "off",                                       INIFileName);
-		WritePrivateProfileString(szSection,   "AutoPauseMsg",           (uiVerbLevel & V_AUTOPAUSE) == V_AUTOPAUSE             ? "on" : "off",                                       INIFileName);
-		WritePrivateProfileString(szSection,   "AutoSave",               SET->AutoSave                                          ? "on" : "off",                                       INIFileName);
-		WritePrivateProfileString(szSection,   "AutoUW",                 SET->AutoUW                                            ? "on" : "off",                                       INIFileName);
-		WritePrivateProfileString(szSection,   "BreakKeyboard",          SET->BreakKB                                           ? "on" : "off",                                       INIFileName);
-		WritePrivateProfileString(szSection,   "BreakMouse",             SET->BreakMouse                                        ? "on" : "off",                                       INIFileName);
-		WritePrivateProfileString(szSection,   "BreakOnGM",              SET->BreakGM                                           ? "on" : "off",                                       INIFileName);
-		WritePrivateProfileString(szSection,   "BreakOnSummon",          SET->BreakSummon                                       ? "on" : "off",                                       INIFileName);
-		WritePrivateProfileFloat( szSection,   "DistSummon",             SET->DistSummon,                                                                                             INIFileName);
-		WritePrivateProfileString(szSection,   "FeignSupport",           SET->Feign                                             ? "on" : "off",                                       INIFileName);
-		WritePrivateProfileString(szSection,   "Heading",                (SET->Head == H_TRUE)                                  ? "true" : (SET->Head == H_LOOSE ? "loose" : "fast"), INIFileName);
-		WritePrivateProfileString(szSection,   "HideHelp",               (uiVerbLevel & V_HIDEHELP) == V_HIDEHELP               ? "on" : "off",                                       INIFileName);
-		WritePrivateProfileString(szSection,   "KeyboardPause",          SET->PauseKB                                           ? "on" : "off",                                       INIFileName);
-		WritePrivateProfileString(szSection,   "MousePause",             SET->PauseMouse                                        ? "on" : "off",                                       INIFileName);
-		WritePrivateProfileString(szSection,   "LockPause",              SET->LockPause                                         ? "on" : "off",                                       INIFileName);
-		WritePrivateProfileInt(   szSection,   "PauseMinDelay",          PAUSE->Min,                                                                                                  INIFileName);
-		WritePrivateProfileInt(   szSection,   "PauseMaxDelay",          PAUSE->Max,                                                                                                  INIFileName);
-		WritePrivateProfileString(szSection,   "SaveByChar",             SET->SaveByChar                                        ? "on" : "off",                                       INIFileName);
-		WritePrivateProfileFloat( szSection,   "TurnRate",               SET->TurnRate,                                                                                               INIFileName);
-		WritePrivateProfileString(szSection,   "UseWindow",              SET->Window                                            ? "on" : "off",                                       INIFileName);
-		WritePrivateProfileString(szSection,   "Verbosity",              (uiVerbLevel & V_VERBOSITY) == V_VERBOSITY             ? "on" : "off",                                       INIFileName);
-		// FullVerbosity is more frequent, detailed output, and differs from Verbosity
-		// Setting one does not include the text of the other.
-		WritePrivateProfileString(szSection,   "FullVerbosity",          (uiVerbLevel & V_FULLVERBOSITY) == V_FULLVERBOSITY     ? "on" : "off",                                       INIFileName);
-		// Total Silence writes no output except critical or user-requested
-		WritePrivateProfileString(szSection,   "TotalSilence",           (uiVerbLevel == 0)                                     ? "on" : "off",                                       INIFileName);
-		WritePrivateProfileInt(   szSection,   "VerbosityFlags",         static_cast<int>(uiVerbLevel),                                                                               INIFileName);
-		WritePrivateProfileString(szSection,   "WinEQ",                  SET->WinEQ                                             ? "on" : "off",                                       INIFileName);
+        strcpy_s(szSection, "Defaults");
+        WritePrivateProfileFloat( szSection,   "AllowMove",              SET->AllowMove,                                                                                              INIFileName);
+        WritePrivateProfileString(szSection,   "AutoPause",              SET->AutoPause                                         ? "on" : "off",                                       INIFileName);
+        WritePrivateProfileString(szSection,   "AutoPauseMsg",           (uiVerbLevel & V_AUTOPAUSE) == V_AUTOPAUSE             ? "on" : "off",                                       INIFileName);
+        WritePrivateProfileString(szSection,   "AutoSave",               SET->AutoSave                                          ? "on" : "off",                                       INIFileName);
+        WritePrivateProfileString(szSection,   "AutoUW",                 SET->AutoUW                                            ? "on" : "off",                                       INIFileName);
+        WritePrivateProfileString(szSection,   "BreakKeyboard",          SET->BreakKB                                           ? "on" : "off",                                       INIFileName);
+        WritePrivateProfileString(szSection,   "BreakMouse",             SET->BreakMouse                                        ? "on" : "off",                                       INIFileName);
+        WritePrivateProfileString(szSection,   "BreakOnGM",              SET->BreakGM                                           ? "on" : "off",                                       INIFileName);
+        WritePrivateProfileString(szSection,   "BreakOnSummon",          SET->BreakSummon                                       ? "on" : "off",                                       INIFileName);
+        WritePrivateProfileFloat( szSection,   "DistSummon",             SET->DistSummon,                                                                                             INIFileName);
+        WritePrivateProfileString(szSection,   "FeignSupport",           SET->Feign                                             ? "on" : "off",                                       INIFileName);
+        WritePrivateProfileString(szSection,   "Heading",                (SET->Head == H_TRUE)                                  ? "true" : (SET->Head == H_LOOSE ? "loose" : "fast"), INIFileName);
+        WritePrivateProfileString(szSection,   "HideHelp",               (uiVerbLevel & V_HIDEHELP) == V_HIDEHELP               ? "on" : "off",                                       INIFileName);
+        WritePrivateProfileString(szSection,   "KeyboardPause",          SET->PauseKB                                           ? "on" : "off",                                       INIFileName);
+        WritePrivateProfileString(szSection,   "MousePause",             SET->PauseMouse                                        ? "on" : "off",                                       INIFileName);
+        WritePrivateProfileString(szSection,   "LockPause",              SET->LockPause                                         ? "on" : "off",                                       INIFileName);
+        WritePrivateProfileInt(   szSection,   "PauseMinDelay",          PAUSE->Min,                                                                                                  INIFileName);
+        WritePrivateProfileInt(   szSection,   "PauseMaxDelay",          PAUSE->Max,                                                                                                  INIFileName);
+        WritePrivateProfileString(szSection,   "SaveByChar",             SET->SaveByChar                                        ? "on" : "off",                                       INIFileName);
+        WritePrivateProfileFloat( szSection,   "TurnRate",               SET->TurnRate,                                                                                               INIFileName);
+        WritePrivateProfileString(szSection,   "UseWindow",              SET->Window                                            ? "on" : "off",                                       INIFileName);
+        WritePrivateProfileString(szSection,   "Verbosity",              (uiVerbLevel & V_VERBOSITY) == V_VERBOSITY             ? "on" : "off",                                       INIFileName);
+        // FullVerbosity is more frequent, detailed output, and differs from Verbosity
+        // Setting one does not include the text of the other.
+        WritePrivateProfileString(szSection,   "FullVerbosity",          (uiVerbLevel & V_FULLVERBOSITY) == V_FULLVERBOSITY     ? "on" : "off",                                       INIFileName);
+        // Total Silence writes no output except critical or user-requested
+        WritePrivateProfileString(szSection,   "TotalSilence",           (uiVerbLevel == 0)                                     ? "on" : "off",                                       INIFileName);
+        WritePrivateProfileInt(   szSection,   "VerbosityFlags",         static_cast<int>(uiVerbLevel),                                                                               INIFileName);
+        WritePrivateProfileString(szSection,   "WinEQ",                  SET->WinEQ                                             ? "on" : "off",                                       INIFileName);
 
         break;
     }
-	return;
+    return;
 
-	//can do the rest later this function is incredibly expensive and slow, need to make it only save what has changed.
+    //can do the rest later this function is incredibly expensive and slow, need to make it only save what has changed.
     // stucklogic
-	strcpy_s(szSection, "StuckLogic");
+    strcpy_s(szSection, "StuckLogic");
     WritePrivateProfileString(szSection,      "StuckLogic",              STUCK->On                                              ? "on" : "off",                                       INIFileName);
-	WritePrivateProfileFloat( szSection,      "DistStuck",               STUCK->Dist,                                                                                                 INIFileName);
-	WritePrivateProfileInt(   szSection,      "PulseCheck",              static_cast<int>(STUCK->Check),                                                                              INIFileName);
+    WritePrivateProfileFloat( szSection,      "DistStuck",               STUCK->Dist,                                                                                                 INIFileName);
+    WritePrivateProfileInt(   szSection,      "PulseCheck",              static_cast<int>(STUCK->Check),                                                                              INIFileName);
     WritePrivateProfileInt(   szSection,      "PulseUnstuck",            static_cast<int>(STUCK->Unstuck),                                                                            INIFileName);
     WritePrivateProfileString(szSection,      "TryToJump",               STUCK->Jump                                            ? "on" : "off",                                       INIFileName);
     WritePrivateProfileString(szSection,      "TurnHalf",                STUCK->TurnHalf                                        ? "on" : "off",                                       INIFileName);
@@ -4773,12 +4773,12 @@ void SaveConfigSetting(BYTE ucCmdUsed,char*Value,char*)
     if (SET->SaveByChar && _strnicmp(szTemp, "true", 5))
     {
         // Character specific
-		WritePrivateProfileFloat( szCharName, "AllowMove",               SET->AllowMove,                                                                                              INIFileName);
+        WritePrivateProfileFloat( szCharName, "AllowMove",               SET->AllowMove,                                                                                              INIFileName);
         WritePrivateProfileFloat( szCharName, "ArcBehind",               SET_S->ArcBehind,                                                                                            INIFileName);
         WritePrivateProfileFloat( szCharName, "ArcNotFront",             SET_S->ArcNotFront,                                                                                          INIFileName);
         WritePrivateProfileString(szCharName, "AutoSave",                SET->AutoSave                                         ? "on" : "off",                                        INIFileName);
         WritePrivateProfileString(szCharName, "AutoUW",                  SET->AutoUW                                           ? "on" : "off",                                        INIFileName);
-		WritePrivateProfileFloat( szCharName, "DistBreak",               SET_S->DistBreak,                                                                                            INIFileName);
+        WritePrivateProfileFloat( szCharName, "DistBreak",               SET_S->DistBreak,                                                                                            INIFileName);
         WritePrivateProfileString(szCharName, "BreakOnGate",             SET_S->BreakGate                                      ? "on" : "off",                                        INIFileName);
         WritePrivateProfileString(szCharName, "BreakOnWarp",             SET_S->BreakWarp                                      ? "on" : "off",                                        INIFileName);
         WritePrivateProfileString(szCharName, "PauseOnWarp",             SET_S->PauseWarp                                      ? "on" : "off",                                        INIFileName);
@@ -4786,19 +4786,19 @@ void SaveConfigSetting(BYTE ucCmdUsed,char*Value,char*)
         WritePrivateProfileFloat( szCharName, "DistSnaproll",            SET_S->DistSnap,                                                                                             INIFileName);
         WritePrivateProfileString(szCharName, "FeignSupport",            SET->Feign                                            ? "on" : "off",                                        INIFileName);
         WritePrivateProfileString(szCharName, "Heading",                 (SET->Head == H_TRUE)                                 ? "true" : (SET->Head == H_LOOSE  ? "loose" : "fast"), INIFileName);
-		WritePrivateProfileFloat( szCharName, "LeashLength",             SET_CAMP->Length,                                                                                            INIFileName);
+        WritePrivateProfileFloat( szCharName, "LeashLength",             SET_CAMP->Length,                                                                                            INIFileName);
         WritePrivateProfileString(szCharName, "UseLeash",                SET_CAMP->Leash                                       ? "on" : "off",                                        INIFileName);
         WritePrivateProfileString(szCharName, "UseWindow",               SET->Window                                           ? "on" : "off",                                        INIFileName);
         WritePrivateProfileString(szCharName, "Verbosity",               (uiVerbLevel & V_VERBOSITY)     == V_VERBOSITY        ? "on" : "off",                                        INIFileName);
         WritePrivateProfileString(szCharName, "FullVerbosity",           (uiVerbLevel & V_FULLVERBOSITY) == V_FULLVERBOSITY    ? "on" : "off",                                        INIFileName);
-		WritePrivateProfileInt(   szCharName, "VerbosityFlags",          static_cast<int>(uiVerbLevel),                                                                               INIFileName);
-		WritePrivateProfileFloat( szCharName, "CampRadius",              SET_CAMP->Radius,                                                                                            INIFileName);
+        WritePrivateProfileInt(   szCharName, "VerbosityFlags",          static_cast<int>(uiVerbLevel),                                                                               INIFileName);
+        WritePrivateProfileFloat( szCharName, "CampRadius",              SET_CAMP->Radius,                                                                                            INIFileName);
         WritePrivateProfileString(szCharName, "RealtimePlayer",          SET_CAMP->Realtime                                    ? "on" : "off",                                        INIFileName);
         // scatter values
         WritePrivateProfileString(szCharName, "UseScatter",              SET_CAMP->Scatter                                     ? "on" : "off",                                        INIFileName);
-		WritePrivateProfileFloat( szCharName, "Bearing",                 SET_CAMP->Bearing,                                                                                           INIFileName);
+        WritePrivateProfileFloat( szCharName, "Bearing",                 SET_CAMP->Bearing,                                                                                           INIFileName);
         WritePrivateProfileFloat( szCharName, "ScatDist",                SET_CAMP->ScatDist,                                                                                          INIFileName);
-		WritePrivateProfileFloat( szCharName, "ScatSize",                SET_CAMP->ScatSize,                                                                                          INIFileName);
+        WritePrivateProfileFloat( szCharName, "ScatSize",                SET_CAMP->ScatSize,                                                                                          INIFileName);
     }
 }
 
@@ -4875,9 +4875,9 @@ void ChangeSetting(unsigned char ucCmdUsed, bool bToggle, char szSetting[MAX_STR
                 return;
             }
             WriteLine(szMsg, V_SETTINGS);
-			if (SET->AutoSave) {
-				SaveConfig();
-			}
+            if (SET->AutoSave) {
+                SaveConfig();
+            }
             return;
         }
         else
@@ -5262,12 +5262,12 @@ void ChangeSetting(unsigned char ucCmdUsed, bool bToggle, char szSetting[MAX_STR
 
         if (!bCustomMsg)
         {
-			if(SET->AutoSave) {
-				if (ucCmdUsed == 1 || ucCmdUsed == 2 || ucCmdUsed == 3 || ucCmdUsed == 4)
-					SaveConfigSetting(ucCmdUsed, szParameter, szSetDigit);
-				else
-					SaveConfig();
-			}
+            if(SET->AutoSave) {
+                if (ucCmdUsed == 1 || ucCmdUsed == 2 || ucCmdUsed == 3 || ucCmdUsed == 4)
+                    SaveConfigSetting(ucCmdUsed, szParameter, szSetDigit);
+                else
+                    SaveConfig();
+            }
             return;
         }
     }
@@ -5469,12 +5469,12 @@ void ChangeSetting(unsigned char ucCmdUsed, bool bToggle, char szSetting[MAX_STR
         }
     }
 
-	if (SET->AutoSave) {
-		if (ucCmdUsed==1 || ucCmdUsed ==2 || ucCmdUsed==3 || ucCmdUsed == 4)
-			SaveConfigSetting(ucCmdUsed, szParameter, szSetDigit);
-		else
-			SaveConfig();
-	}
+    if (SET->AutoSave) {
+        if (ucCmdUsed==1 || ucCmdUsed ==2 || ucCmdUsed==3 || ucCmdUsed == 4)
+            SaveConfigSetting(ucCmdUsed, szParameter, szSetDigit);
+        else
+            SaveConfig();
+    }
     WriteLine(szMsg, V_SETTINGS);
 }
 
@@ -6862,26 +6862,26 @@ void DebugToINI(unsigned char ucCmdUsed)
     WritePrivateProfileString("INISettings",   "SET->Feign",            SET->Feign            ? "true" : "false",   szDebugName);
     WritePrivateProfileString("INISettings",   "SET->SaveByChar",       SET->SaveByChar       ? "true" : "false",   szDebugName);
     WritePrivateProfileString("INISettings",   "SET->BreakSummon",      SET->BreakSummon      ? "true" : "false",   szDebugName);
-	WritePrivateProfileFloat( "INISettings",   "SET->DistSummon",       SET->DistSummon,                            szDebugName);
-	WritePrivateProfileFloat( "INISettings",   "SET->TurnRate",         SET->TurnRate,                              szDebugName);
-	WritePrivateProfileInt(   "INISettings",   "PAUSE->Min",            PAUSE->Min,                                 szDebugName);
-	WritePrivateProfileInt(   "INISettings",   "PAUSE->Max",            PAUSE->Max,                                 szDebugName);
-	WritePrivateProfileInt(   "INISettings",   "CAMP->Min",             CAMP->Min,                                  szDebugName);
-	WritePrivateProfileInt(   "INISettings",   "CAMP->Max",             CAMP->Max,                                  szDebugName);
-	WritePrivateProfileFloat( "INISettings",   "MOVE->ChangeHead",      MOVE->ChangeHead,                           szDebugName);
+    WritePrivateProfileFloat( "INISettings",   "SET->DistSummon",       SET->DistSummon,                            szDebugName);
+    WritePrivateProfileFloat( "INISettings",   "SET->TurnRate",         SET->TurnRate,                              szDebugName);
+    WritePrivateProfileInt(   "INISettings",   "PAUSE->Min",            PAUSE->Min,                                 szDebugName);
+    WritePrivateProfileInt(   "INISettings",   "PAUSE->Max",            PAUSE->Max,                                 szDebugName);
+    WritePrivateProfileInt(   "INISettings",   "CAMP->Min",             CAMP->Min,                                  szDebugName);
+    WritePrivateProfileInt(   "INISettings",   "CAMP->Max",             CAMP->Max,                                  szDebugName);
+    WritePrivateProfileFloat( "INISettings",   "MOVE->ChangeHead",      MOVE->ChangeHead,                           szDebugName);
     WritePrivateProfileString("SetOnPulse",    "PAUSE->UserKB",         PAUSE->UserKB         ? "true" : "false",   szDebugName);
     WritePrivateProfileString("SetOnPulse",    "CAMP->Returning",       CAMP->Returning       ? "true" : "false",   szDebugName);
     WritePrivateProfileString("SetOnPulse",    "CAMP->Auto",            CAMP->Auto            ? "true" : "false",   szDebugName);
     WritePrivateProfileString("SetOnPulse",    "STICK->HaveTarget",     STICK->HaveTarget     ? "true" : "false",   szDebugName);
-	WritePrivateProfileFloat( "SetOnPulse",    "STICK->CurDist",        STICK->CurDist,                             szDebugName);
+    WritePrivateProfileFloat( "SetOnPulse",    "STICK->CurDist",        STICK->CurDist,                             szDebugName);
     WritePrivateProfileString("Stick",         "STICK->BreakGate",      STICK->BreakGate      ? "true" : "false",   szDebugName);
     WritePrivateProfileString("Stick",         "STICK->BreakWarp",      STICK->BreakWarp      ? "true" : "false",   szDebugName);
-	WritePrivateProfileFloat( "Stick",         "STICK->DistBreak",      STICK->DistBreak,                           szDebugName);
+    WritePrivateProfileFloat( "Stick",         "STICK->DistBreak",      STICK->DistBreak,                           szDebugName);
     WritePrivateProfileString("Stick",         "STICK->On",             STICK->On             ? "true" : "false",   szDebugName);
     WritePrivateProfileString("Stick",         "STICK->SetDist",        STICK->SetDist        ? "true" : "false",   szDebugName);
     WritePrivateProfileFloat( "Stick",         "STICK->Dist",           STICK->Dist,                                szDebugName);
-	WritePrivateProfileFloat( "Stick",         "STICK->DistMod",        STICK->DistMod,                             szDebugName);
-	WritePrivateProfileFloat( "Stick",         "STICK->DistModP",       STICK->DistModP,                            szDebugName);
+    WritePrivateProfileFloat( "Stick",         "STICK->DistMod",        STICK->DistMod,                             szDebugName);
+    WritePrivateProfileFloat( "Stick",         "STICK->DistModP",       STICK->DistModP,                            szDebugName);
     WritePrivateProfileString("Stick",         "STICK->MoveBack",       STICK->MoveBack       ? "true" : "false",   szDebugName);
     WritePrivateProfileString("Stick",         "STICK->Behind",         STICK->Behind         ? "true" : "false",   szDebugName);
     WritePrivateProfileString("Stick",         "STICK->BehindOnce",     STICK->BehindOnce     ? "true" : "false",   szDebugName);
@@ -6890,43 +6890,43 @@ void DebugToINI(unsigned char ucCmdUsed)
     WritePrivateProfileString("Stick",         "STICK->Pin",            STICK->Pin            ? "true" : "false",   szDebugName);
     WritePrivateProfileString("Stick",         "STICK->Snaproll",       STICK->Snaproll       ? "true" : "false",   szDebugName);
     WritePrivateProfileString("Stick",         "STICK->Hold",           STICK->Hold           ? "true" : "false",   szDebugName);
-	WritePrivateProfileInt(   "Stick",         "STICK->HoldID",         static_cast<int>(STICK->HoldID),            szDebugName);
+    WritePrivateProfileInt(   "Stick",         "STICK->HoldID",         static_cast<int>(STICK->HoldID),            szDebugName);
     WritePrivateProfileString("Stick",         "STICK->UW",             STICK->UW             ? "true" : "false",   szDebugName);
     WritePrivateProfileString("Stick",         "STICK->Always",         STICK->Always         ? "true" : "false",   szDebugName);
-	WritePrivateProfileFloat( "StickSnaproll", "STICK->Snap->Y",        STICK->Snap->Y,                             szDebugName);
-	WritePrivateProfileFloat( "StickSnaproll", "STICK->Snap->X",        STICK->Snap->X,                             szDebugName);
+    WritePrivateProfileFloat( "StickSnaproll", "STICK->Snap->Y",        STICK->Snap->Y,                             szDebugName);
+    WritePrivateProfileFloat( "StickSnaproll", "STICK->Snap->X",        STICK->Snap->X,                             szDebugName);
     WritePrivateProfileString("MakeCamp",      "CURCAMP->On",           CURCAMP->On           ? "true" : "false",   szDebugName);
-	WritePrivateProfileFloat( "MakeCamp",      "CURCAMP->Y",            CURCAMP->Y,                                 szDebugName);
-	WritePrivateProfileFloat( "MakeCamp",      "CURCAMP->X",            CURCAMP->X,                                 szDebugName);
-	WritePrivateProfileFloat( "MakeCamp",      "CURCAMP->Radius",       CURCAMP->Radius,                            szDebugName);
+    WritePrivateProfileFloat( "MakeCamp",      "CURCAMP->Y",            CURCAMP->Y,                                 szDebugName);
+    WritePrivateProfileFloat( "MakeCamp",      "CURCAMP->X",            CURCAMP->X,                                 szDebugName);
+    WritePrivateProfileFloat( "MakeCamp",      "CURCAMP->Radius",       CURCAMP->Radius,                            szDebugName);
     WritePrivateProfileString("MakeCamp",      "ALTCAMP->On",           ALTCAMP->On           ? "true" : "false",   szDebugName);
-	WritePrivateProfileFloat( "MakeCamp",      "ALTCAMP->Y",            ALTCAMP->Y,                                 szDebugName);
-	WritePrivateProfileFloat( "MakeCamp",      "ALTCAMP->X",            ALTCAMP->X,                                 szDebugName);
-	WritePrivateProfileFloat( "MakeCamp",      "ALTCAMP->Radius",       ALTCAMP->Radius,                            szDebugName);
+    WritePrivateProfileFloat( "MakeCamp",      "ALTCAMP->Y",            ALTCAMP->Y,                                 szDebugName);
+    WritePrivateProfileFloat( "MakeCamp",      "ALTCAMP->X",            ALTCAMP->X,                                 szDebugName);
+    WritePrivateProfileFloat( "MakeCamp",      "ALTCAMP->Radius",       ALTCAMP->Radius,                            szDebugName);
     WritePrivateProfileString("MakeCamp",      "CURCAMP->Pc",           CURCAMP->Pc           ? "true" : "false",   szDebugName);
-	WritePrivateProfileInt(   "MakeCamp",      "CURCAMP->PcID",         static_cast<int>(CURCAMP->PcID),            szDebugName);
+    WritePrivateProfileInt(   "MakeCamp",      "CURCAMP->PcID",         static_cast<int>(CURCAMP->PcID),            szDebugName);
     WritePrivateProfileString("MakeCamp",      "CAMP->DoReturn",        CAMP->DoReturn        ? "true" : "false",   szDebugName);
     WritePrivateProfileString("MakeCamp",      "CAMP->DoAlt",           CAMP->DoAlt           ? "true" : "false",   szDebugName);
     WritePrivateProfileString("MakeCamp",      "CURCAMP->Leash",        CURCAMP->Leash        ? "true" : "false",   szDebugName);
-	WritePrivateProfileFloat( "MakeCamp",      "CURCAMP->Length",       CURCAMP->Length,                            szDebugName);
+    WritePrivateProfileFloat( "MakeCamp",      "CURCAMP->Length",       CURCAMP->Length,                            szDebugName);
     WritePrivateProfileString("MakeCamp",      "CURCAMP->Scatter",      CURCAMP->Scatter      ? "true" : "false",   szDebugName);
-	WritePrivateProfileFloat( "MakeCamp",      "CURCAMP->Bearing",      CURCAMP->Bearing,                           szDebugName);
+    WritePrivateProfileFloat( "MakeCamp",      "CURCAMP->Bearing",      CURCAMP->Bearing,                           szDebugName);
     WritePrivateProfileFloat( "MakeCamp",      "CURCAMP->ScatSize",     CURCAMP->ScatSize,                          szDebugName);
     WritePrivateProfileFloat( "MakeCamp",      "CURCAMP->ScatDist",     CURCAMP->ScatDist,                          szDebugName);
     WritePrivateProfileString("MakeCamp",      "CURCAMP->NoAggro",      CURCAMP->NoAggro      ? "true" : "false",   szDebugName);
     WritePrivateProfileString("MakeCamp",      "CURCAMP->HaveTarget",   CURCAMP->HaveTarget   ? "true" : "false",   szDebugName);
     WritePrivateProfileString("MakeCamp",      "CURCAMP->NotLoot",      CURCAMP->NotLoot      ? "true" : "false",   szDebugName);
     WritePrivateProfileString("MoveTo",        "MOVETO->On",            MOVETO->On            ? "true" : "false",   szDebugName);
-	WritePrivateProfileFloat( "MoveTo",        "MOVETO->Y",             MOVETO->Y,                                  szDebugName);
+    WritePrivateProfileFloat( "MoveTo",        "MOVETO->Y",             MOVETO->Y,                                  szDebugName);
     WritePrivateProfileFloat( "MoveTo",        "MOVETO->X",             MOVETO->X,                                  szDebugName);
     WritePrivateProfileFloat( "MoveTo",        "MOVETO->Dist",          MOVETO->Dist,                               szDebugName);
     WritePrivateProfileString("MoveTo",        "MOVETO->PreciseY",      MOVETO->PreciseY      ? "true" : "false",   szDebugName);
-	WritePrivateProfileFloat( "MoveTo",        "MOVETO->DistY",         MOVETO->DistY,                              szDebugName);
+    WritePrivateProfileFloat( "MoveTo",        "MOVETO->DistY",         MOVETO->DistY,                              szDebugName);
     WritePrivateProfileString("MoveTo",        "MOVETO->PreciseX",      MOVETO->PreciseX      ? "true" : "false",   szDebugName);
-	WritePrivateProfileFloat( "MoveTo",        "MOVETO->DistX",         MOVETO->DistX,                              szDebugName);
+    WritePrivateProfileFloat( "MoveTo",        "MOVETO->DistX",         MOVETO->DistX,                              szDebugName);
     WritePrivateProfileString("MoveTo",        "MOVETO->Walk",          MOVETO->Walk          ? "true" : "false",   szDebugName);
     WritePrivateProfileString("Circle",        "CIRCLE->On",            CIRCLE->On            ? "true" : "false",   szDebugName);
-	WritePrivateProfileFloat( "Circle",        "CIRCLE->Y",             CIRCLE->Y,                                  szDebugName);
+    WritePrivateProfileFloat( "Circle",        "CIRCLE->Y",             CIRCLE->Y,                                  szDebugName);
     WritePrivateProfileFloat( "Circle",        "CIRCLE->X",             CIRCLE->X,                                  szDebugName);
     WritePrivateProfileFloat( "Circle",        "CIRCLE->Radius",        CIRCLE->Radius,                             szDebugName);
     WritePrivateProfileString("Circle",        "CIRCLE->Backward",      CIRCLE->Backward      ? "true" : "false",   szDebugName);
@@ -6935,11 +6935,11 @@ void DebugToINI(unsigned char ucCmdUsed)
     WritePrivateProfileString("StuckLogic",    "pMU->CmdFwd",           pMU->CmdFwd           ? "true" : "false",   szDebugName);
     WritePrivateProfileString("StuckLogic",    "STUCK->Jump",           STUCK->Jump           ? "true" : "false",   szDebugName);
     WritePrivateProfileString("StuckLogic",    "STUCK->TurnHalf",       STUCK->TurnHalf       ? "true" : "false",   szDebugName);
-	WritePrivateProfileInt(   "StuckLogic",    "STUCK->Check",          static_cast<int>(STUCK->Check),             szDebugName);
+    WritePrivateProfileInt(   "StuckLogic",    "STUCK->Check",          static_cast<int>(STUCK->Check),             szDebugName);
     WritePrivateProfileInt(   "StuckLogic",    "STUCK->Unstuck",        static_cast<int>(STUCK->Unstuck),           szDebugName);
     WritePrivateProfileInt(   "StuckLogic",    "STUCK->StuckInc",       static_cast<int>(STUCK->StuckInc),          szDebugName);
     WritePrivateProfileInt(   "StuckLogic",    "STUCK->StuckDec",       static_cast<int>(STUCK->StuckDec),          szDebugName);
-	WritePrivateProfileFloat( "StuckLogic",    "STUCK->Dist",           STUCK->Dist,                                szDebugName);
+    WritePrivateProfileFloat( "StuckLogic",    "STUCK->Dist",           STUCK->Dist,                                szDebugName);
     WritePrivateProfileFloat( "StuckLogic",    "PulseAvg",              STUCK->CurDist,                             szDebugName);
     WritePrivateProfileFloat( "StuckLogic",    "STUCK->TurnSize",       STUCK->TurnSize,                            szDebugName);
     WritePrivateProfileFloat( "StuckLogic",    "STUCK->Y",              STUCK->Y,                                   szDebugName);
@@ -6952,7 +6952,7 @@ void SaveConfig()
     char szTemp[MAX_STRING]     = {0};
 
     // default settings
-	WritePrivateProfileFloat( "Defaults",       "AllowMove",          SET->AllowMove,                                                                                               INIFileName);
+    WritePrivateProfileFloat( "Defaults",       "AllowMove",          SET->AllowMove,                                                                                               INIFileName);
     WritePrivateProfileString("Defaults",       "AutoPause",          SET->AutoPause                                         ? "on" : "off",                                        INIFileName);
     WritePrivateProfileString("Defaults",       "AutoPauseMsg",       (uiVerbLevel & V_AUTOPAUSE) == V_AUTOPAUSE             ? "on" : "off",                                        INIFileName);
     WritePrivateProfileString("Defaults",       "AutoSave",           SET->AutoSave                                          ? "on" : "off",                                        INIFileName);
@@ -6961,17 +6961,17 @@ void SaveConfig()
     WritePrivateProfileString("Defaults",       "BreakMouse",         SET->BreakMouse                                        ? "on" : "off",                                        INIFileName);
     WritePrivateProfileString("Defaults",       "BreakOnGM",          SET->BreakGM                                           ? "on" : "off",                                        INIFileName);
     WritePrivateProfileString("Defaults",       "BreakOnSummon",      SET->BreakSummon                                       ? "on" : "off",                                        INIFileName);
-	WritePrivateProfileFloat( "Defaults",       "DistSummon",         SET->DistSummon,                                                                                              INIFileName);
+    WritePrivateProfileFloat( "Defaults",       "DistSummon",         SET->DistSummon,                                                                                              INIFileName);
     WritePrivateProfileString("Defaults",       "FeignSupport",       SET->Feign                                             ? "on" : "off",                                        INIFileName);
     WritePrivateProfileString("Defaults",       "Heading",            (SET->Head == H_TRUE) ? "true" : (SET->Head == H_LOOSE ? "loose" : "fast"),                                   INIFileName);
     WritePrivateProfileString("Defaults",       "HideHelp",           (uiVerbLevel & V_HIDEHELP) == V_HIDEHELP               ? "on" : "off",                                        INIFileName);
     WritePrivateProfileString("Defaults",       "KeyboardPause",      SET->PauseKB                                           ? "on" : "off",                                        INIFileName);
     WritePrivateProfileString("Defaults",       "MousePause",         SET->PauseMouse                                        ? "on" : "off",                                        INIFileName);
     WritePrivateProfileString("Defaults",       "LockPause",          SET->LockPause                                         ? "on" : "off",                                        INIFileName);
-	WritePrivateProfileInt(   "Defaults",       "PauseMinDelay",      static_cast<int>(PAUSE->Min),                                                                                 INIFileName);
-	WritePrivateProfileInt(   "Defaults",       "PauseMaxDelay",      static_cast<int>(PAUSE->Max),                                                                                 INIFileName);
+    WritePrivateProfileInt(   "Defaults",       "PauseMinDelay",      static_cast<int>(PAUSE->Min),                                                                                 INIFileName);
+    WritePrivateProfileInt(   "Defaults",       "PauseMaxDelay",      static_cast<int>(PAUSE->Max),                                                                                 INIFileName);
     WritePrivateProfileString("Defaults",       "SaveByChar",         SET->SaveByChar                                        ? "on" : "off",                                        INIFileName);
-	WritePrivateProfileFloat( "Defaults",       "TurnRate",           SET->TurnRate,                                                                                                INIFileName);
+    WritePrivateProfileFloat( "Defaults",       "TurnRate",           SET->TurnRate,                                                                                                INIFileName);
     WritePrivateProfileString("Defaults",       "UseWindow",          SET->Window                                            ? "on" : "off",                                        INIFileName);
     WritePrivateProfileString("Defaults",       "Verbosity",          (uiVerbLevel & V_VERBOSITY) == V_VERBOSITY             ? "on" : "off",                                        INIFileName);
     // FullVerbosity is more frequent, detailed output, and differs from Verbosity
@@ -6979,12 +6979,12 @@ void SaveConfig()
     WritePrivateProfileString("Defaults",       "FullVerbosity",      (uiVerbLevel & V_FULLVERBOSITY) == V_FULLVERBOSITY     ? "on" : "off",                                        INIFileName);
     // Total Silence writes no output except critical or user-requested
     WritePrivateProfileString("Defaults",       "TotalSilence",       (uiVerbLevel == 0)                                     ? "on" : "off",                                        INIFileName);
-	WritePrivateProfileInt(   "Defaults",       "VerbosityFlags",     static_cast<int>(uiVerbLevel),                                                                                INIFileName);
+    WritePrivateProfileInt(   "Defaults",       "VerbosityFlags",     static_cast<int>(uiVerbLevel),                                                                                INIFileName);
     WritePrivateProfileString("Defaults",       "WinEQ",              SET->WinEQ                                             ? "on" : "off",                                        INIFileName);
     // stick settings
     WritePrivateProfileString("Stick",          "AlwaysUW",           SET_S->UW                                              ? "on" : "off",                                        INIFileName);
     WritePrivateProfileString("Stick",          "AwareNotAggro",      SET->Spin                                              ? "on" : "off",                                        INIFileName);
-	WritePrivateProfileFloat( "Stick",          "ArcBehind",          SET_S->ArcBehind,                                                                                             INIFileName);
+    WritePrivateProfileFloat( "Stick",          "ArcBehind",          SET_S->ArcBehind,                                                                                             INIFileName);
     WritePrivateProfileFloat( "Stick",          "ArcNotFront",        SET_S->ArcNotFront,                                                                                           INIFileName);
     WritePrivateProfileString("Stick",          "BreakOnGate",        SET_S->BreakGate                                       ? "on" : "off",                                        INIFileName);
     WritePrivateProfileString("Stick",          "BreakOnHit",         SET_S->BreakHit                                        ? "on" : "off",                                        INIFileName);
@@ -6992,42 +6992,42 @@ void SaveConfig()
     WritePrivateProfileString("Stick",          "BreakOnWarp",        SET_S->BreakWarp                                       ? "on" : "off",                                        INIFileName);
     WritePrivateProfileString("Stick",          "PauseOnWarp",        SET_S->PauseWarp                                       ? "on" : "off",                                        INIFileName);
     WritePrivateProfileString("Stick",          "DelayStrafe",        SET_S->DelayStrafe                                     ? "on" : "off",                                        INIFileName);
-	WritePrivateProfileFloat( "Stick",          "DistBackup",         SET_S->DistBack,                                                                                              INIFileName);
+    WritePrivateProfileFloat( "Stick",          "DistBackup",         SET_S->DistBack,                                                                                              INIFileName);
     WritePrivateProfileFloat( "Stick",          "DistBreak",          SET_S->DistBreak,                                                                                             INIFileName);
     WritePrivateProfileFloat( "Stick",          "DistFlex",           SET_S->DistFlex,                                                                                              INIFileName);
-	WritePrivateProfileFloat( "Stick",          "DistMod",            SET_S->DistMod,                                                                                               INIFileName);
+    WritePrivateProfileFloat( "Stick",          "DistMod",            SET_S->DistMod,                                                                                               INIFileName);
     WritePrivateProfileFloat( "Stick",          "DistMod%",           SET_S->DistModP,                                                                                              INIFileName);
     WritePrivateProfileFloat( "Stick",          "DistSnap",           SET_S->DistSnap,                                                                                              INIFileName);
     WritePrivateProfileString("Stick",          "RandomArc",          SET_S->Randomize                                       ? "on" : "off",                                        INIFileName);
-	WritePrivateProfileInt(   "Stick",          "StrafeMinDelay",     SET_S->Min,                                                                                                   INIFileName);
-	WritePrivateProfileInt(   "Stick",          "StrafeMaxDelay",     SET_S->Max,                                                                                                   INIFileName);
+    WritePrivateProfileInt(   "Stick",          "StrafeMinDelay",     SET_S->Min,                                                                                                   INIFileName);
+    WritePrivateProfileInt(   "Stick",          "StrafeMaxDelay",     SET_S->Max,                                                                                                   INIFileName);
     WritePrivateProfileString("Stick",          "UseBackward",        SET_S->UseBack                                         ? "on" : "off",                                        INIFileName);
     WritePrivateProfileString("Stick",          "UseFleeing",         SET_S->UseFleeing                                      ? "on" : "off",                                        INIFileName);
     WritePrivateProfileString("Stick",          "UseFlex",            SET_S->Flex                                            ? "on" : "off",                                        INIFileName);
     WritePrivateProfileString("Stick",          "UseWalk",            SET_S->Walk                                            ? "on" : "off",                                        INIFileName);
     // makecamp settings
-	WritePrivateProfileFloat( "MakeCamp",       "CampRadius",         SET_CAMP->Radius,                                                                                             INIFileName);
-	WritePrivateProfileInt(   "MakeCamp",       "MinDelay",           SET_CAMP->Min,                                                                                                INIFileName);
+    WritePrivateProfileFloat( "MakeCamp",       "CampRadius",         SET_CAMP->Radius,                                                                                             INIFileName);
+    WritePrivateProfileInt(   "MakeCamp",       "MinDelay",           SET_CAMP->Min,                                                                                                INIFileName);
     WritePrivateProfileInt(   "MakeCamp",       "MaxDelay",           SET_CAMP->Max,                                                                                                INIFileName);
     WritePrivateProfileString("MakeCamp",       "RealtimePlayer",     SET_CAMP->Realtime                                     ? "on" : "off",                                        INIFileName);
     WritePrivateProfileString("MakeCamp",       "ReturnHaveTarget",   SET_CAMP->HaveTarget                                   ? "on" : "off",                                        INIFileName);
     WritePrivateProfileString("MakeCamp",       "ReturnNoAggro",      SET_CAMP->NoAggro                                      ? "on" : "off",                                        INIFileName);
     WritePrivateProfileString("MakeCamp",       "ReturnNotLooting",   SET_CAMP->NotLoot                                      ? "on" : "off",                                        INIFileName);
     WritePrivateProfileString("MakeCamp",       "UseLeash",           SET_CAMP->Leash                                        ? "on" : "off",                                        INIFileName);
-	WritePrivateProfileFloat( "MakeCamp",       "LeashLength",        SET_CAMP->Length,                                                                                             INIFileName);
+    WritePrivateProfileFloat( "MakeCamp",       "LeashLength",        SET_CAMP->Length,                                                                                             INIFileName);
     // camp scattering
     WritePrivateProfileString("MakeCamp",       "UseScatter",         SET_CAMP->Scatter                                      ? "on" : "off",                                        INIFileName);
-	WritePrivateProfileFloat( "MakeCamp",       "Bearing",            SET_CAMP->Bearing,                                                                                            INIFileName);
+    WritePrivateProfileFloat( "MakeCamp",       "Bearing",            SET_CAMP->Bearing,                                                                                            INIFileName);
     WritePrivateProfileFloat( "MakeCamp",       "ScatDist",           SET_CAMP->ScatDist,                                                                                           INIFileName);
-	WritePrivateProfileFloat( "MakeCamp",       "ScatSize",           SET_CAMP->ScatSize,                                                                                           INIFileName);
+    WritePrivateProfileFloat( "MakeCamp",       "ScatSize",           SET_CAMP->ScatSize,                                                                                           INIFileName);
     // moveto
     WritePrivateProfileString("MoveTo",         "AlwaysUW",           SET_M->UW                                              ? "on" : "off",                                        INIFileName);
-	WritePrivateProfileFloat( "MoveTo",         "ArrivalDist",        SET_M->Dist,                                                                                                  INIFileName);
+    WritePrivateProfileFloat( "MoveTo",         "ArrivalDist",        SET_M->Dist,                                                                                                  INIFileName);
     WritePrivateProfileFloat( "MoveTo",         "ArrivalDistX",       SET_M->DistX,                                                                                                 INIFileName);
     WritePrivateProfileFloat( "MoveTo",         "ArrivalDistY",       SET_M->DistY,                                                                                                 INIFileName);
     WritePrivateProfileString("MoveTo",         "BreakOnAggro",       SET_M->BreakAggro                                      ? "on" : "off",                                        INIFileName);
     WritePrivateProfileString("MoveTo",         "BreakOnHit",         SET_M->BreakHit                                        ? "on" : "off",                                        INIFileName);
-	WritePrivateProfileFloat( "MoveTo",         "DistBackup",         SET_M->DistBack,                                                                                              INIFileName);
+    WritePrivateProfileFloat( "MoveTo",         "DistBackup",         SET_M->DistBack,                                                                                              INIFileName);
     WritePrivateProfileFloat( "MoveTo",         "MoveToMod",          SET_M->Mod,                                                                                                   INIFileName);
     WritePrivateProfileString("MoveTo",         "UseBackward",        SET_M->UseBack                                         ? "on" : "off",                                        INIFileName);
     WritePrivateProfileString("MoveTo",         "UseWalk",            SET_M->Walk                                            ? "on" : "off",                                        INIFileName);
@@ -7035,12 +7035,12 @@ void SaveConfig()
     WritePrivateProfileString("Circle",         "Backward",           SET_C->Backward                                        ? "on" : "off",                                        INIFileName);
     WritePrivateProfileString("Circle",         "CCW",                SET_C->CCW                                             ? "on" : "off",                                        INIFileName);
     WritePrivateProfileString("Circle",         "Drunken",            SET_C->Drunk                                           ? "on" : "off",                                        INIFileName);
-	WritePrivateProfileFloat( "Circle",         "RadiusSize",         SET_C->Radius,                                                                                                INIFileName);
+    WritePrivateProfileFloat( "Circle",         "RadiusSize",         SET_C->Radius,                                                                                                INIFileName);
     // stucklogic
     WritePrivateProfileString("StuckLogic",     "StuckLogic",         STUCK->On                                              ? "on" : "off",                                        INIFileName);
-	WritePrivateProfileFloat( "StuckLogic",     "DistStuck",          STUCK->Dist,                                                                                                  INIFileName);
-	WritePrivateProfileInt(   "StuckLogic",     "PulseCheck",         static_cast<int>(STUCK->Check),                                                                               INIFileName);
-	WritePrivateProfileInt(   "StuckLogic",     "PulseUnstuck",       static_cast<int>(STUCK->Unstuck),                                                                             INIFileName);
+    WritePrivateProfileFloat( "StuckLogic",     "DistStuck",          STUCK->Dist,                                                                                                  INIFileName);
+    WritePrivateProfileInt(   "StuckLogic",     "PulseCheck",         static_cast<int>(STUCK->Check),                                                                               INIFileName);
+    WritePrivateProfileInt(   "StuckLogic",     "PulseUnstuck",       static_cast<int>(STUCK->Unstuck),                                                                             INIFileName);
     WritePrivateProfileString("StuckLogic",     "TryToJump",          STUCK->Jump                                            ? "on" : "off",                                        INIFileName);
     WritePrivateProfileString("StuckLogic",     "TurnHalf",           STUCK->TurnHalf                                        ? "on" : "off",                                        INIFileName);
 
@@ -7049,31 +7049,31 @@ void SaveConfig()
     if (SET->SaveByChar && _strnicmp(szTemp, "true", 5))
     {
         // Character specific
-		WritePrivateProfileFloat( szCharName,   "AllowMove",          SET->AllowMove,                                                                                               INIFileName);
-		WritePrivateProfileFloat( szCharName,   "ArcBehind",          SET_S->ArcBehind,                                                                                             INIFileName);
-		WritePrivateProfileFloat( szCharName,   "ArcNotFront",        SET_S->ArcNotFront,                                                                                           INIFileName);
+        WritePrivateProfileFloat( szCharName,   "AllowMove",          SET->AllowMove,                                                                                               INIFileName);
+        WritePrivateProfileFloat( szCharName,   "ArcBehind",          SET_S->ArcBehind,                                                                                             INIFileName);
+        WritePrivateProfileFloat( szCharName,   "ArcNotFront",        SET_S->ArcNotFront,                                                                                           INIFileName);
         WritePrivateProfileString(szCharName,   "AutoSave",           SET->AutoSave                                          ? "on" : "off",                                        INIFileName);
         WritePrivateProfileString(szCharName,   "AutoUW",             SET->AutoUW                                            ? "on" : "off",                                        INIFileName);
-		WritePrivateProfileFloat( szCharName,   "ArcNotFront",        SET_S->DistBreak,                                                                                             INIFileName);
+        WritePrivateProfileFloat( szCharName,   "ArcNotFront",        SET_S->DistBreak,                                                                                             INIFileName);
         WritePrivateProfileString(szCharName,   "BreakOnGate",        SET_S->BreakGate                                       ? "on" : "off",                                        INIFileName);
         WritePrivateProfileString(szCharName,   "BreakOnWarp",        SET_S->BreakWarp                                       ? "on" : "off",                                        INIFileName);
         WritePrivateProfileString(szCharName,   "PauseOnWarp",        SET_S->PauseWarp                                       ? "on" : "off",                                        INIFileName);
         WritePrivateProfileString(szCharName,   "LockPause",          SET->LockPause                                         ? "on" : "off",                                        INIFileName);
-		WritePrivateProfileFloat( szCharName,   "DistSnaproll",       SET_S->DistSnap,                                                                                              INIFileName);
+        WritePrivateProfileFloat( szCharName,   "DistSnaproll",       SET_S->DistSnap,                                                                                              INIFileName);
         WritePrivateProfileString(szCharName,   "FeignSupport",       SET->Feign                                             ? "on" : "off",                                        INIFileName);
         WritePrivateProfileString(szCharName,   "Heading",            (SET->Head == H_TRUE)                                  ? "true" : (SET->Head == H_LOOSE  ? "loose" : "fast"), INIFileName);
-		WritePrivateProfileFloat( szCharName,   "LeashLength",        SET_CAMP->Length,                                                                                             INIFileName);
+        WritePrivateProfileFloat( szCharName,   "LeashLength",        SET_CAMP->Length,                                                                                             INIFileName);
         WritePrivateProfileString(szCharName,   "UseLeash",           SET_CAMP->Leash                                        ? "on" : "off",                                        INIFileName);
         WritePrivateProfileString(szCharName,   "UseWindow",          SET->Window                                            ? "on" : "off",                                        INIFileName);
         WritePrivateProfileString(szCharName,   "Verbosity",          (uiVerbLevel & V_VERBOSITY)     == V_VERBOSITY         ? "on" : "off",                                        INIFileName);
         WritePrivateProfileString(szCharName,   "FullVerbosity",      (uiVerbLevel & V_FULLVERBOSITY) == V_FULLVERBOSITY     ? "on" : "off",                                        INIFileName);
-		WritePrivateProfileInt(   szCharName,   "VerbosityFlags",     static_cast<int>(uiVerbLevel),                                                                                INIFileName);
-		WritePrivateProfileFloat( szCharName,   "CampRadius",         SET_CAMP->Radius,                                                                                             INIFileName);
+        WritePrivateProfileInt(   szCharName,   "VerbosityFlags",     static_cast<int>(uiVerbLevel),                                                                                INIFileName);
+        WritePrivateProfileFloat( szCharName,   "CampRadius",         SET_CAMP->Radius,                                                                                             INIFileName);
         WritePrivateProfileString(szCharName,   "RealtimePlayer",     SET_CAMP->Realtime                                     ? "on" : "off",                                        INIFileName);
         // scatter values
         WritePrivateProfileString(szCharName,   "UseScatter",         SET_CAMP->Scatter                                      ? "on" : "off",                                        INIFileName);
-		WritePrivateProfileFloat( szCharName,   "Bearing",            SET_CAMP->Bearing,                                                                                            INIFileName);
-		WritePrivateProfileFloat( szCharName,   "ScatDist",           SET_CAMP->ScatDist,                                                                                           INIFileName);
+        WritePrivateProfileFloat( szCharName,   "Bearing",            SET_CAMP->Bearing,                                                                                            INIFileName);
+        WritePrivateProfileFloat( szCharName,   "ScatDist",           SET_CAMP->ScatDist,                                                                                           INIFileName);
         WritePrivateProfileFloat( szCharName,   "ScatSize",           SET_CAMP->ScatSize,                                                                                           INIFileName);
     }
 
@@ -7084,11 +7084,11 @@ void LoadConfig()
 {
     char szTemp[MAX_STRING]     = {0};
     bool bRewriteIni            = false; // re-save if bad values were read
-	float fArg = 0.0f;
-	unsigned int uiArg = 0;
+    float fArg = 0.0f;
+    unsigned int uiArg = 0;
 
     // default settings
-	fArg = GetPrivateProfileFloat("Defaults", "AllowMove", SET->AllowMove, INIFileName);
+    fArg = GetPrivateProfileFloat("Defaults", "AllowMove", SET->AllowMove, INIFileName);
     if (fArg >= 10.0f)
     {
         SET->AllowMove = fArg;
@@ -7119,7 +7119,7 @@ void LoadConfig()
     GetPrivateProfileString("Defaults", "BreakOnSummon",   SET->BreakSummon ? "on" : "off", szTemp, MAX_STRING, INIFileName);
     SET->BreakSummon = (!_strnicmp(szTemp, "on", 3));
 
-	fArg = GetPrivateProfileFloat("Defaults", "DistSummon", SET->DistSummon, INIFileName);
+    fArg = GetPrivateProfileFloat("Defaults", "DistSummon", SET->DistSummon, INIFileName);
     if (fArg >= 2.0f)
     {
         SET->DistSummon = fArg;
@@ -7161,7 +7161,7 @@ void LoadConfig()
     GetPrivateProfileString("Defaults", "SaveByChar",      SET->SaveByChar  ? "on" : "off", szTemp, MAX_STRING, INIFileName);
     SET->SaveByChar = (!_strnicmp(szTemp, "on", 3));
 
-	fArg = GetPrivateProfileFloat("Defaults", "TurnRate", SET->TurnRate, INIFileName);
+    fArg = GetPrivateProfileFloat("Defaults", "TurnRate", SET->TurnRate, INIFileName);
     if (fArg >= 1.0f && fArg <= 100.0f)
     {
         SET->TurnRate = fArg;
@@ -7237,8 +7237,8 @@ void LoadConfig()
     GetPrivateProfileString("Stick",    "AlwaysUW",        SET_S->UW        ? "on" : "off",   szTemp, MAX_STRING, INIFileName);
     SET_S->UW = (!_strnicmp(szTemp, "on", 3));
 
-	fArg = GetPrivateProfileFloat("Stick", "ArcBehind", SET_S->ArcBehind, INIFileName);
-	if (fArg > 5.0f && fArg < 260.0f)
+    fArg = GetPrivateProfileFloat("Stick", "ArcBehind", SET_S->ArcBehind, INIFileName);
+    if (fArg > 5.0f && fArg < 260.0f)
     {
         SET_S->ArcBehind = fArg;
     }
@@ -7247,7 +7247,7 @@ void LoadConfig()
         bRewriteIni = true;
     }
 
-	fArg = GetPrivateProfileFloat("Stick", "ArcNotFront", SET_S->ArcNotFront, INIFileName);
+    fArg = GetPrivateProfileFloat("Stick", "ArcNotFront", SET_S->ArcNotFront, INIFileName);
     if (fArg > 5.0f && fArg < 260.0f)
     {
         SET_S->ArcNotFront = fArg;
@@ -7280,7 +7280,7 @@ void LoadConfig()
     GetPrivateProfileString("Stick",    "DelayStrafe",     SET_S->DelayStrafe ? "on" : "off", szTemp, MAX_STRING, INIFileName);
     SET_S->DelayStrafe = (!_strnicmp(szTemp, "on", 3));
 
-	fArg = GetPrivateProfileFloat("Stick", "DistBackup", SET_S->DistBack, INIFileName);
+    fArg = GetPrivateProfileFloat("Stick", "DistBackup", SET_S->DistBack, INIFileName);
     if (fArg >= 1.0f)
     {
         SET_S->DistBack = fArg;
@@ -7290,7 +7290,7 @@ void LoadConfig()
         bRewriteIni = true;
     }
 
-	fArg = GetPrivateProfileFloat("Stick", "DistBreak", SET_S->DistBreak, INIFileName);
+    fArg = GetPrivateProfileFloat("Stick", "DistBreak", SET_S->DistBreak, INIFileName);
     if (fArg >= 1.0f)
     {
         SET_S->DistBreak = fArg;
@@ -7300,7 +7300,7 @@ void LoadConfig()
         bRewriteIni = true;
     }
 
-	fArg = GetPrivateProfileFloat("Stick", "DistFlex", SET_S->DistFlex, INIFileName);
+    fArg = GetPrivateProfileFloat("Stick", "DistFlex", SET_S->DistFlex, INIFileName);
     if (fArg >= 2.0f && fArg <= 20.0f)
     {
         SET_S->DistFlex = fArg;
@@ -7310,7 +7310,7 @@ void LoadConfig()
         bRewriteIni = true;
     }
 
-	fArg = GetPrivateProfileFloat("Stick", "DistMod", SET_S->DistMod, INIFileName);
+    fArg = GetPrivateProfileFloat("Stick", "DistMod", SET_S->DistMod, INIFileName);
     if (fArg >= 0.0f)
     {
         SET_S->DistMod = fArg;
@@ -7320,7 +7320,7 @@ void LoadConfig()
         bRewriteIni = true;
     }
 
-	fArg = GetPrivateProfileFloat("Stick", "DistMod%", SET_S->DistModP, INIFileName);
+    fArg = GetPrivateProfileFloat("Stick", "DistMod%", SET_S->DistModP, INIFileName);
     if (fArg >= 0.0f)
     {
         SET_S->DistModP = fArg;
@@ -7330,7 +7330,7 @@ void LoadConfig()
         bRewriteIni = true;
     }
 
-	fArg = GetPrivateProfileFloat("Stick", "DistSnaproll", SET_S->DistSnap, INIFileName);
+    fArg = GetPrivateProfileFloat("Stick", "DistSnaproll", SET_S->DistSnap, INIFileName);
     if (fArg >= 1.0f)
     {
         SET_S->DistSnap = fArg;
@@ -7361,7 +7361,7 @@ void LoadConfig()
     SET_S->Walk = (!_strnicmp(szTemp, "on", 3));
 
     // makecamp settings
-	fArg = GetPrivateProfileFloat("MakeCamp", "CampRadius", SET_CAMP->Radius, INIFileName);
+    fArg = GetPrivateProfileFloat("MakeCamp", "CampRadius", SET_CAMP->Radius, INIFileName);
     if (fArg >= 5.0f)
     {
         SET_CAMP->SetRadius(fArg);
@@ -7390,7 +7390,7 @@ void LoadConfig()
     GetPrivateProfileString("MakeCamp", "UseLeash",         SET_CAMP->Leash      ? "on" : "off", szTemp, MAX_STRING, INIFileName);
     SET_CAMP->Leash = (!_strnicmp(szTemp, "on", 3));
 
-	fArg = GetPrivateProfileFloat("MakeCamp", "LeashLength", SET_CAMP->Length, INIFileName);
+    fArg = GetPrivateProfileFloat("MakeCamp", "LeashLength", SET_CAMP->Length, INIFileName);
     if (fArg >= SET_CAMP->Radius)
     {
         SET_CAMP->SetLeash(fArg);
@@ -7404,9 +7404,9 @@ void LoadConfig()
     GetPrivateProfileString("MakeCamp", "UseScatter",       SET_CAMP->Scatter    ? "on" : "off", szTemp, MAX_STRING, INIFileName);
     SET_CAMP->Scatter = (!_strnicmp(szTemp, "on", 3));
 
-	SET_CAMP->Bearing = GetPrivateProfileFloat("MakeCamp", "Bearing", SET_CAMP->Bearing, INIFileName);
+    SET_CAMP->Bearing = GetPrivateProfileFloat("MakeCamp", "Bearing", SET_CAMP->Bearing, INIFileName);
 
-	fArg = GetPrivateProfileFloat("MakeCamp", "ScatDist", SET_CAMP->ScatDist, INIFileName);
+    fArg = GetPrivateProfileFloat("MakeCamp", "ScatDist", SET_CAMP->ScatDist, INIFileName);
     if (fArg >= 1.0f)
     {
         SET_CAMP->ScatDist = fArg;
@@ -7416,7 +7416,7 @@ void LoadConfig()
         bRewriteIni = true;
     }
 
-	fArg = GetPrivateProfileFloat("MakeCamp", "ScatSize", SET_CAMP->ScatSize, INIFileName);
+    fArg = GetPrivateProfileFloat("MakeCamp", "ScatSize", SET_CAMP->ScatSize, INIFileName);
     if (fArg >= 1.0f)
     {
         SET_CAMP->ScatSize = fArg;
@@ -7430,7 +7430,7 @@ void LoadConfig()
     GetPrivateProfileString("MoveTo",   "AlwaysUW",         SET_M->UW            ? "on" : "off", szTemp, MAX_STRING, INIFileName);
     SET_M->UW = (!_strnicmp(szTemp, "on", 3));
 
-	fArg = GetPrivateProfileFloat("MoveTo", "ArrivalDist", SET_M->Dist, INIFileName);
+    fArg = GetPrivateProfileFloat("MoveTo", "ArrivalDist", SET_M->Dist, INIFileName);
     if (fArg >= 1.0f)
     {
         SET_M->Dist = fArg;
@@ -7440,7 +7440,7 @@ void LoadConfig()
         bRewriteIni = true;
     }
 
-	fArg = GetPrivateProfileFloat("MoveTo", "ArrivalDistX", SET_M->DistX, INIFileName);
+    fArg = GetPrivateProfileFloat("MoveTo", "ArrivalDistX", SET_M->DistX, INIFileName);
     if (fArg >= 1.0f)
     {
         SET_M->DistX = fArg;
@@ -7450,7 +7450,7 @@ void LoadConfig()
         bRewriteIni = true;
     }
 
-	fArg = GetPrivateProfileFloat("MoveTo", "ArrivalDistY", MOVETO->DistY, INIFileName);
+    fArg = GetPrivateProfileFloat("MoveTo", "ArrivalDistY", MOVETO->DistY, INIFileName);
     if (fArg >= 1.0f)
     {
         SET_M->DistY = fArg;
@@ -7466,7 +7466,7 @@ void LoadConfig()
     GetPrivateProfileString("MoveTo",   "BreakOnHit",       SET_M->BreakHit      ? "on" : "off", szTemp, MAX_STRING, INIFileName);
     SET_M->BreakHit = (!_strnicmp(szTemp, "on", 3));
 
-	fArg = GetPrivateProfileFloat("MoveTo", "DistBackup", SET_M->DistBack, INIFileName);
+    fArg = GetPrivateProfileFloat("MoveTo", "DistBackup", SET_M->DistBack, INIFileName);
     if (fArg >= 1.0f)
     {
         SET_M->DistBack = fArg;
@@ -7476,7 +7476,7 @@ void LoadConfig()
         bRewriteIni = true;
     }
 
-	fArg = GetPrivateProfileFloat("MoveTo", "MoveToMod", SET_M->Mod, INIFileName);
+    fArg = GetPrivateProfileFloat("MoveTo", "MoveToMod", SET_M->Mod, INIFileName);
     if (fArg >= 0.0f)
     {
         SET_M->Mod = fArg;
@@ -7502,7 +7502,7 @@ void LoadConfig()
     GetPrivateProfileString("Circle",   "Drunken",          SET_C->Drunk         ? "on" : "off", szTemp, MAX_STRING, INIFileName);
     SET_C->Drunk = (!_strnicmp(szTemp, "on", 3));
 
-	fArg = GetPrivateProfileFloat("Circle", "RadiusSize", SET_C->Radius, INIFileName);
+    fArg = GetPrivateProfileFloat("Circle", "RadiusSize", SET_C->Radius, INIFileName);
     if (fArg >= 5.0f)
     {
         SET_C->SetRadius(fArg);
@@ -7516,7 +7516,7 @@ void LoadConfig()
     GetPrivateProfileString("StuckLogic", "StuckLogic",     STUCK->On            ? "on" : "off", szTemp, MAX_STRING, INIFileName);
     STUCK->On = (!_strnicmp(szTemp, "on", 3));
 
-	fArg = GetPrivateProfileFloat("StuckLogic", "DistStuck", STUCK->Dist, INIFileName);
+    fArg = GetPrivateProfileFloat("StuckLogic", "DistStuck", STUCK->Dist, INIFileName);
     if (fArg > 0.0f)
     {
         STUCK->Dist = fArg;
@@ -7526,7 +7526,7 @@ void LoadConfig()
         bRewriteIni = true;
     }
 
-	uiArg = static_cast<unsigned int>(GetPrivateProfileInt("StuckLogic", "PulseCheck", STUCK->Check, INIFileName));
+    uiArg = static_cast<unsigned int>(GetPrivateProfileInt("StuckLogic", "PulseCheck", STUCK->Check, INIFileName));
     if (uiArg > 1)
     {
         STUCK->Check = uiArg;
@@ -7536,7 +7536,7 @@ void LoadConfig()
         bRewriteIni = true;
     }
 
-	uiArg = static_cast<unsigned int>(GetPrivateProfileInt("StuckLogic", "PulseUnstuck", STUCK->Unstuck, INIFileName));
+    uiArg = static_cast<unsigned int>(GetPrivateProfileInt("StuckLogic", "PulseUnstuck", STUCK->Unstuck, INIFileName));
     if (uiArg > 1)
     {
         STUCK->Unstuck = uiArg;
@@ -7557,7 +7557,7 @@ void LoadConfig()
     if (SET->SaveByChar && _strnicmp(szTemp, "true", 5))
     {
         // Character specific
-		fArg = GetPrivateProfileFloat(szCharName, "AllowMove", SET->AllowMove, INIFileName);
+        fArg = GetPrivateProfileFloat(szCharName, "AllowMove", SET->AllowMove, INIFileName);
         if (fArg > 10.0f)
         {
             SET->AllowMove = fArg;
@@ -7567,7 +7567,7 @@ void LoadConfig()
             bRewriteIni = true;
         }
 
-		fArg = GetPrivateProfileFloat(szCharName, "ArcBehind", SET_S->ArcBehind, INIFileName);
+        fArg = GetPrivateProfileFloat(szCharName, "ArcBehind", SET_S->ArcBehind, INIFileName);
         if (fArg > 5.0f && fArg < 260.0f)
         {
             SET_S->ArcBehind = fArg;
@@ -7577,7 +7577,7 @@ void LoadConfig()
             bRewriteIni = true;
         }
 
-		fArg = GetPrivateProfileFloat(szCharName, "ArcNotFront", SET_S->ArcNotFront, INIFileName);
+        fArg = GetPrivateProfileFloat(szCharName, "ArcNotFront", SET_S->ArcNotFront, INIFileName);
         if (fArg > 5.0f && fArg < 260.0f)
         {
             SET_S->ArcNotFront = fArg;
@@ -7607,7 +7607,7 @@ void LoadConfig()
         GetPrivateProfileString(szCharName, "LockPause",    SET->LockPause       ? "on" : "off", szTemp, MAX_STRING, INIFileName);
         SET->LockPause = (!_strnicmp(szTemp, "on", 3));
 
-		fArg = GetPrivateProfileFloat(szCharName, "DistBreak", STICK->DistBreak, INIFileName);
+        fArg = GetPrivateProfileFloat(szCharName, "DistBreak", STICK->DistBreak, INIFileName);
         if (fArg >= 1.0f)
         {
             STICK->DistBreak = fArg;
@@ -7617,7 +7617,7 @@ void LoadConfig()
             bRewriteIni = true;
         }
 
-		fArg = GetPrivateProfileFloat(szCharName, "DistSnaproll", SET_S->DistSnap, INIFileName);
+        fArg = GetPrivateProfileFloat(szCharName, "DistSnaproll", SET_S->DistSnap, INIFileName);
         if (fArg >= 1.0f)
         {
             SET_S->DistSnap = fArg;
@@ -7641,7 +7641,7 @@ void LoadConfig()
             SET->Head = H_LOOSE;
         }
 
-		fArg = GetPrivateProfileFloat(szCharName, "LeashLength", SET_CAMP->Length, INIFileName);
+        fArg = GetPrivateProfileFloat(szCharName, "LeashLength", SET_CAMP->Length, INIFileName);
         if (fArg >= SET_CAMP->Radius)
         {
             SET_CAMP->SetLeash(fArg);
@@ -7683,7 +7683,7 @@ void LoadConfig()
         // set flags directly, if no entry present use results of above reads
         uiVerbLevel = GetPrivateProfileInt(szCharName, "VerbosityFlags", uiVerbLevel, INIFileName);
 
-		fArg = GetPrivateProfileFloat(szCharName, "CampRadius", SET_CAMP->Radius, INIFileName);
+        fArg = GetPrivateProfileFloat(szCharName, "CampRadius", SET_CAMP->Radius, INIFileName);
         if (fArg >= 5.0f)
         {
             SET_CAMP->SetRadius(fArg);
@@ -7700,9 +7700,9 @@ void LoadConfig()
         GetPrivateProfileString(szCharName, "UseScatter",     SET_CAMP->Scatter  ? "on" : "off", szTemp, MAX_STRING, INIFileName);
         SET_CAMP->Scatter = (!_strnicmp(szTemp, "on", 3));
 
-		SET_CAMP->Bearing = GetPrivateProfileFloat(szCharName, "Bearing", SET_CAMP->Bearing, INIFileName);
+        SET_CAMP->Bearing = GetPrivateProfileFloat(szCharName, "Bearing", SET_CAMP->Bearing, INIFileName);
 
-		fArg = GetPrivateProfileFloat(szCharName, "ScatDist", SET_CAMP->ScatDist, INIFileName);
+        fArg = GetPrivateProfileFloat(szCharName, "ScatDist", SET_CAMP->ScatDist, INIFileName);
         if (fArg >= 1.0f)
         {
             SET_CAMP->ScatDist = fArg;
@@ -7712,7 +7712,7 @@ void LoadConfig()
             bRewriteIni = true;
         }
 
-		fArg = GetPrivateProfileFloat(szCharName, "ScatSize", SET_CAMP->ScatSize, INIFileName);
+        fArg = GetPrivateProfileFloat(szCharName, "ScatSize", SET_CAMP->ScatSize, INIFileName);
         if (fArg >= 1.0f)
         {
             SET_CAMP->ScatSize = fArg;
@@ -7946,11 +7946,11 @@ void UndoKeybinds()
 // MQ2 Exported functions
 unsigned int __stdcall MQ2DataVariableLookup(char * VarName, char * Value,size_t ValueLen)
 {
-	strcpy_s(Value, ValueLen, VarName);
-	if (PCHARINFO pChar = GetCharInfo()) {
-		return (unsigned int)strlen(ParseMacroParameter(Value, ValueLen));
-	}
-	return (unsigned int)strlen(Value);
+    strcpy_s(Value, ValueLen, VarName);
+    if (PCHARINFO pChar = GetCharInfo()) {
+        return (unsigned int)strlen(ParseMacroParameter(Value, ValueLen));
+    }
+    return (unsigned int)strlen(Value);
 }
 PLUGIN_API void InitializePlugin()
 {
@@ -7990,8 +7990,8 @@ PLUGIN_API void InitializePlugin()
     pMoveUtilsType = new MQ2MoveUtilsType;
 
     // setup mq2melee pointers
-	if (pbMULoaded = (bool*)GetPluginProc("MQ2Melee", "bMULoaded"))
-		*pbMULoaded = true;
+    if (pbMULoaded = (bool*)GetPluginProc("MQ2Melee", "bMULoaded"))
+        *pbMULoaded = true;
 }
 
 PLUGIN_API void ShutdownPlugin()
@@ -8020,14 +8020,14 @@ PLUGIN_API void ShutdownPlugin()
     // destroy mq2 linkage
     UndoKeybinds();
     SetupEvents(false, true);
-	if (pMoveEvent) {
-		pMoveEvent->Reset();
-		delete pMoveEvent;
-		pMoveEvent = 0;
-	}
+    if (pMoveEvent) {
+        pMoveEvent->Reset();
+        delete pMoveEvent;
+        pMoveEvent = 0;
+    }
     // destroy mq2 melee linkage
-	if (pbMULoaded = (bool*)GetPluginProc("MQ2Melee", "bMULoaded"))
-		*pbMULoaded = false;
+    if (pbMULoaded = (bool*)GetPluginProc("MQ2Melee", "bMULoaded"))
+        *pbMULoaded = false;
 
     // destroy UI window
     WINDOW->Destroy(ValidIngame());
@@ -8045,11 +8045,11 @@ PLUGIN_API void ShutdownPlugin()
 
 unsigned int __stdcall MQ2DataVariableLookup2(char * VarName, char * Value,size_t ValueLen)
 {
-	strcpy_s(Value, ValueLen, VarName);
-	if (PCHARINFO pChar = GetCharInfo()) {
-		return (unsigned int)strlen(ParseMacroParameter(Value, ValueLen));
-	}
-	return (unsigned int)strlen(Value);
+    strcpy_s(Value, ValueLen, VarName);
+    if (PCHARINFO pChar = GetCharInfo()) {
+        return (unsigned int)strlen(ParseMacroParameter(Value, ValueLen));
+    }
+    return (unsigned int)strlen(Value);
 }
 
 PLUGIN_API void SetGameState(unsigned long ulGameState)
@@ -8129,7 +8129,7 @@ PLUGIN_API void OnAddSpawn(PlayerClient* pNewSpawn)
     {
         __time64_t tCurrentTime;
         char szTime[30] = {0};
-		struct tm THE_TIME = { 0 };
+        struct tm THE_TIME = { 0 };
 #ifdef OLD_COMPILER_USER
         time(&tCurrentTime);
         THE_TIME = localtime(&tCurrentTime);
@@ -8163,7 +8163,7 @@ PLUGIN_API void OnRemoveSpawn(PlayerClient* pOldSpawn)
     {
         __time64_t tCurrentTime;
         char szTime[30] = {0};
-		struct tm THE_TIME = { 0 };
+        struct tm THE_TIME = { 0 };
 #ifdef OLD_COMPILER_USER
         time(&tCurrentTime);
         THE_TIME = localtime(&tCurrentTime);
@@ -8210,7 +8210,7 @@ PLUGIN_API void OnPulse()
     pMU->AggroTLO();
     // check BreakOnSummon and BreakOnGM
     if (pMU->Broken())
-		return;
+        return;
     // rootme command
     MOVE->DoRoot();
     // handle mousepause & movepause timers
@@ -8275,10 +8275,10 @@ PLUGIN_API void OnPulse()
 // ---------------------------------------------------------------------------
 PLUGIN_API unsigned long OnIncomingChat(char* Line, unsigned long Color)
 {
-	if (gbInZone && pMoveEvent) {
-		CHAR szLine[MAX_STRING] = { 0 };
-		strcpy_s(szLine, Line);
-		pMoveEvent->Feed(szLine);
-	}
-	return 0;
+    if (gbInZone && pMoveEvent) {
+        CHAR szLine[MAX_STRING] = { 0 };
+        strcpy_s(szLine, Line);
+        pMoveEvent->Feed(szLine);
+    }
+    return 0;
 }
