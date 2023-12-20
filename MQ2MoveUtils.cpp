@@ -18,7 +18,7 @@ as required by the copyright holders of these functions, and desired by the deve
 #include <cmath>
 
 constexpr auto PLUGIN_NAME = "MQ2MoveUtils";
-constexpr float fPI = 3.1415926535;
+constexpr float fPI = 3.1415926535f;
 PLUGIN_VERSION(12.5);
 
 PreSetup(PLUGIN_NAME);
@@ -168,7 +168,7 @@ bool bWrapped = false; // hi htw!
 
 char szMsg[MAX_STRING]         = {0};                // use for generic msg output
 char szDebugName[MAX_STRING]   = {0};                // debug file name
-char szCharName[MAX_STRING]    = {0};                // stores char name for INI read/write
+char szCharName[129]    = {0};                // stores char name for INI read/write
 const char szOn[10]            = "\agON\ax";         // used in outputs
 const char szOff[10]           = "\arOFF\ax";        // used in outputs
 const char szArriveMove[50]    = "/moveto location"; // output moveto arrival
@@ -307,7 +307,7 @@ protected:
         ftResult.dwHighDateTime = result.HighPart;
         ftResult.dwLowDateTime  = result.LowPart;
         FileTimeToSystemTime(&ftResult, &stResult);
-        return static_cast<int>(stResult.wSecond * 1000 + stResult.wMilliseconds);
+        return stResult.wSecond * 1000 + stResult.wMilliseconds;
     };
 };
 
@@ -629,9 +629,8 @@ public:
     void AtMe()
     {
         // HandleOurCmd calls this to establish '/circle on' without loc supplied
-        PlayerClient* pChSpawn = pCharSpawn;
-        Y = pChSpawn->Y + Radius * sin(pChSpawn->Heading * fPI / HEADING_HALF);
-        X = pChSpawn->X + Radius * cos(pChSpawn->Heading * fPI / HEADING_HALF);
+        Y = pLocalPlayer->Y + Radius * sin(pLocalPlayer->Heading * fPI / HEADING_HALF);
+        X = pLocalPlayer->X + Radius * cos(pLocalPlayer->Heading * fPI / HEADING_HALF);
         On = true;
     };
 
@@ -1386,7 +1385,7 @@ public:
             break;
         case H_FAST:
         default:
-            pCharSpawn->CameraAngle = static_cast<float>(dNewFace);
+            pLocalPlayer->CameraAngle = static_cast<float>(dNewFace);
             break;
         }
     };
@@ -1462,8 +1461,8 @@ public:
         // within a close enough turn to prevent orbiting around
         // a destination or running away from a close destination
         if (!ValidIngame()) return false;
-        PlayerClient* pChSpawn = pCharSpawn;
-        float fHeadDiff = fabs(pChSpawn->Heading - fHead);
+
+        float fHeadDiff = fabs(pLocalPlayer->Heading - fHead);
 
         if (fHeadDiff > SET->AllowMove)
         {
@@ -1471,7 +1470,7 @@ public:
             return false;
         }
 
-        if ((fHeadDiff / 2.0f) > fabs(GetDistance(pChSpawn->Y, pChSpawn->X, fY, fX)))
+        if (fHeadDiff / 2.0f > fabs(GetDistance(pLocalPlayer->Y, pLocalPlayer->X, fY, fX)))
         {
             // if half our needed adjustment is > distance between us and destination
             return false;
@@ -1503,9 +1502,9 @@ public:
         // stand up when desired (if appropriate)
         // feignsupport is handled *here only*
         if (!ValidIngame()) return;
-        PlayerClient* pChSpawn = pCharSpawn;
 
-        switch (pChSpawn->StandState)
+		uint8_t standstate = pLocalPlayer->StandState;
+        switch (standstate)
         {
         case STANDSTATE_SIT:
             EzCommand("/stand"); // fix for preventing sit/stand bug
@@ -1530,7 +1529,7 @@ public:
         case STANDSTATE_CASTING:
             break;
         default:
-            SpewDebug(DBG_MAIN, "StandIfNeeded():: no StandState matches for %d", pChSpawn->StandState);
+            SpewDebug(DBG_MAIN, "StandIfNeeded():: no StandState matches for %d", standstate);
             break;
         }
     };
@@ -1630,28 +1629,27 @@ private:
     {
         if (!ValidIngame()) return;
         gFaceAngle = H_INACTIVE;
-        PlayerClient* pChSpawn = pCharSpawn;
-        if (fabs(pChSpawn->Heading - fNewHead) < SET->TurnRate)
+        if (fabs(pLocalPlayer->Heading - fNewHead) < SET->TurnRate)
         {
             // if we are within one turn away, set heading to desired heading
-            pChSpawn->Heading      = fNewHead;
-            pChSpawn->SpeedHeading = 0.0f;
+            pLocalPlayer->Heading      = fNewHead;
+            pLocalPlayer->SpeedHeading = 0.0f;
             ChangeHead             = H_INACTIVE;
         }
         else
         {
-            float fCompHead = pChSpawn->Heading + HEADING_HALF;
+            float fCompHead = pLocalPlayer->Heading + HEADING_HALF;
 
-            if (fNewHead < pChSpawn->Heading) fNewHead += HEADING_MAX;
+            if (fNewHead < pLocalPlayer->Heading) fNewHead += HEADING_MAX;
             if (fNewHead < fCompHead)
             {
-                pChSpawn->Heading      = SaneHead(pChSpawn->Heading + SET->TurnRate);
-                pChSpawn->SpeedHeading = 12.0f;
+                pLocalPlayer->Heading      = SaneHead(pLocalPlayer->Heading + SET->TurnRate);
+                pLocalPlayer->SpeedHeading = 12.0f;
             }
             else
             {
-                pChSpawn->Heading      = SaneHead(pChSpawn->Heading - SET->TurnRate);
-                pChSpawn->SpeedHeading = -12.0f;
+                pLocalPlayer->Heading      = SaneHead(pLocalPlayer->Heading - SET->TurnRate);
+                pLocalPlayer->SpeedHeading = -12.0f;
             }
         }
     };
@@ -1660,22 +1658,23 @@ private:
     {
         if (!ValidIngame()) return;
         gFaceAngle = H_INACTIVE;
-        PlayerClient* pChSpawn = pCharSpawn;
-        if (fabs(pChSpawn->Heading - fNewHead) < 14.0f)
+        if (fabs(pLocalPlayer->Heading - fNewHead) < 14.0f)
         {
             pKeypressHandler->CommandState[CMD_LEFT] = 0;
             pEverQuestInfo->keyDown[CMD_LEFT] = 0;
             pKeypressHandler->CommandState[CMD_RIGHT] = 0;
             pEverQuestInfo->keyDown[CMD_RIGHT] = 0;
-            pChSpawn->Heading = fNewHead;
-            pChSpawn->SpeedHeading = 0.0f;
+            pLocalPlayer->Heading = fNewHead;
+            pLocalPlayer->SpeedHeading = 0.0f;
             ChangeHead = H_INACTIVE;
         }
         else
         {
-            float fCompHead = pChSpawn->Heading + HEADING_HALF;
+            float fCompHead = pLocalPlayer->Heading + HEADING_HALF;
 
-            if (fNewHead < pChSpawn->Heading) fNewHead += HEADING_MAX;
+            if (fNewHead < pLocalPlayer->Heading)
+				fNewHead += HEADING_MAX;
+
             if (fNewHead < fCompHead)
             {
                 pKeypressHandler->CommandState[CMD_RIGHT] = 0;
@@ -2113,11 +2112,11 @@ protected:
             (LONG)GetPrivateProfileInt(SET->SaveByChar ? szCharName : "Window", "ChatRight",    410,  INIFileName),
             (LONG)GetPrivateProfileInt(SET->SaveByChar ? szCharName : "Window", "ChatBottom",   210,  INIFileName) });
 
-        OurWnd->SetFades((GetPrivateProfileInt(SET->SaveByChar ? szCharName : "Window", "Fades",  0,    INIFileName) ? true:false));
+        OurWnd->SetFades(GetPrivateProfileBool(SET->SaveByChar ? szCharName : "Window", "Fades",  false,    INIFileName));
         OurWnd->SetAlpha(GetPrivateProfileInt(SET->SaveByChar ? szCharName : "Window", "Alpha",        255,  INIFileName));
         OurWnd->SetFadeToAlpha(GetPrivateProfileInt(SET->SaveByChar ? szCharName : "Window", "FadeToAlpha",  255,  INIFileName));
         OurWnd->SetFadeDuration(GetPrivateProfileInt(SET->SaveByChar ? szCharName : "Window", "Duration",     500,  INIFileName));
-        OurWnd->SetLocked((GetPrivateProfileInt(SET->SaveByChar ? szCharName : "Window", "Locked", 0,    INIFileName) ? true:false));
+        OurWnd->SetLocked(GetPrivateProfileBool(SET->SaveByChar ? szCharName : "Window", "Locked", 0,    INIFileName));
         OurWnd->SetFadeDelay(GetPrivateProfileInt(SET->SaveByChar ? szCharName : "Window", "Delay",        2000, INIFileName));
         OurWnd->SetBGType(GetPrivateProfileInt(SET->SaveByChar ? szCharName : "Window", "BGType",       1,    INIFileName));
         ARGBCOLOR col = { 0 };
@@ -2139,17 +2138,17 @@ protected:
 
     void SaveWnd()
     {
-        char szSection[MAX_STRING] = { 0 };
+        char szSection[132] = { 0 };
         strcpy_s(szSection, SET->SaveByChar ? szCharName : "Window");
         WritePrivateProfileInt(   szSection, "ChatTop",      OurWnd->GetLocation().top,       INIFileName);
         WritePrivateProfileInt(   szSection, "ChatBottom",   OurWnd->GetLocation().bottom,    INIFileName);
         WritePrivateProfileInt(   szSection, "ChatLeft",     OurWnd->GetLocation().left,      INIFileName);
         WritePrivateProfileInt(   szSection, "ChatRight",    OurWnd->GetLocation().right,     INIFileName);
-        WritePrivateProfileInt(   szSection, "Fades",        OurWnd->GetFades(),              INIFileName);
+        WritePrivateProfileBool(  szSection, "Fades",        OurWnd->GetFades(),              INIFileName);
         WritePrivateProfileInt(   szSection, "Alpha",        OurWnd->GetAlpha(),              INIFileName);
         WritePrivateProfileInt(   szSection, "FadeToAlpha",  OurWnd->GetFadeToAlpha(),        INIFileName);
         WritePrivateProfileInt(   szSection, "Duration",     OurWnd->GetFadeDuration(),       INIFileName);
-        WritePrivateProfileInt(   szSection, "Locked",       OurWnd->IsLocked(),              INIFileName);
+        WritePrivateProfileBool(  szSection, "Locked",       OurWnd->IsLocked(),              INIFileName);
         WritePrivateProfileInt(   szSection, "Delay",        OurWnd->GetFadeDelay(),          INIFileName);
         WritePrivateProfileInt(   szSection, "BGType",       OurWnd->GetBGType(),             INIFileName);
         ARGBCOLOR col = { 0 };
@@ -2318,8 +2317,7 @@ public:
             Dest.Float = 0.0f;
             if (CURCAMP->On)
             {
-                PlayerClient* pLPlayer = pLocalPlayer;
-                Dest.Float = GetDistance(pLPlayer->Y, pLPlayer->X, CURCAMP->Y, CURCAMP->X);
+                Dest.Float = GetDistance(pLocalPlayer->Y, pLocalPlayer->X, CURCAMP->Y, CURCAMP->X);
             }
             Dest.Type = mq::datatypes::pFloatType;
             return true;
@@ -2327,8 +2325,7 @@ public:
             Dest.Float = 0.0f;
             if (ALTCAMP->On)
             {
-                PlayerClient* pLPlayer = pLocalPlayer;
-                Dest.Float = GetDistance(pLPlayer->Y, pLPlayer->X, ALTCAMP->Y, ALTCAMP->X);
+                Dest.Float = GetDistance(pLocalPlayer->Y, pLocalPlayer->X, ALTCAMP->Y, ALTCAMP->X);
             }
             Dest.Type = mq::datatypes::pFloatType;
             return true;
@@ -2480,8 +2477,21 @@ public:
             Dest.DWord = false;
             if (PlayerClient* psTarget = STICK->Hold ? GetSpawnByID(STICK->HoldID) : pTarget)
             {
-                PlayerClient* pChSpawn = pCharSpawn;
-                Dest.DWord = (fabs(GetDistance(pChSpawn, psTarget)) <= ((STICK->Dist > 0.0f ? STICK->Dist : (psTarget->StandState ? get_melee_range(pLocalPlayer, psTarget) : 15.0f)) * STICK->DistModP + STICK->DistMod) && fabs(MOVE->AngDist(psTarget->Heading, pChSpawn->Heading)) <= STICK->ArcBehind) ? true : false;
+				float dist = 0.0f;
+				if (STICK->Dist > 0.0f)
+				{
+					dist = STICK->Dist;
+				}
+				else if (psTarget->StandState)
+				{
+					dist = get_melee_range(pLocalPlayer, psTarget);
+				}
+				else
+				{
+					dist = 15.0f;
+				}
+
+                Dest.DWord = (fabs(GetDistance(pLocalPlayer, psTarget)) <= (dist * STICK->DistModP + STICK->DistMod) && fabs(MOVE->AngDist(psTarget->Heading, pLocalPlayer->Heading)) <= STICK->ArcBehind) ? true : false;
             }
             Dest.Type = mq::datatypes::pBoolType;
             return true;
@@ -2489,7 +2499,7 @@ public:
             Dest.DWord = false;
             if (PlayerClient* psTarget = STICK->Hold ? GetSpawnByID(STICK->HoldID) : pTarget)
             {
-                Dest.DWord = (fabs(GetDistance(pCharSpawn, psTarget)) <= STICK->Dist) ? true : false;
+                Dest.DWord = (fabs(GetDistance(pCharSpawn, psTarget)) <= STICK->Dist);
             }
             Dest.Type = mq::datatypes::pBoolType;
             return true;
@@ -2595,10 +2605,6 @@ public:
             Dest.Type  = mq::datatypes::pBoolType;
             return true;
         case Stopped:
-            /*if (pLocalPlayer)
-            {
-                Dest.DWord = (fabs(GetDistance(pCharSpawn->Y, (pCharSpawn->X, MOVETO->Y, MOVETO->X)) <= MOVETO->Dist) ? true : false;
-            }*/
             Dest.DWord = pMU->StoppedMoveto;
             Dest.Type  = mq::datatypes::pBoolType;
             return true;
@@ -2606,7 +2612,7 @@ public:
             Dest.DWord = false;
             if (pLocalPlayer)
             {
-                Dest.DWord = (fabs(GetDistance(pCharSpawn->Y, pCharSpawn->X, CAMP->Y, CAMP->X)) <= MOVETO->Dist) ? true : false;
+                Dest.DWord = (fabs(GetDistance(pCharSpawn->Y, pCharSpawn->X, CAMP->Y, CAMP->X)) <= MOVETO->Dist);
             }
             Dest.Type  = mq::datatypes::pBoolType;
             return true;
@@ -3151,7 +3157,7 @@ float MovingAvg(float fNew, int iEntries)
             fAvg += fRing[i];
         }
     }
-    return (fAvg / static_cast<float>(iEntries));
+    return (fAvg / iEntries);
 }
 
 // ----------------------------------------
@@ -3159,8 +3165,7 @@ float MovingAvg(float fNew, int iEntries)
 inline bool ValidIngame(bool bCheckDead)
 {
     // CTD prevention function
-    PlayerClient* pChSpawn = pCharSpawn;
-    if (GetGameState() != GAMESTATE_INGAME || !pLocalPlayer || !pChSpawn->SpawnID || !pMU || (bCheckDead && pChSpawn->RespawnTimer > 0))
+    if (GetGameState() != GAMESTATE_INGAME || !pLocalPlayer || !pLocalPlayer->SpawnID || !pMU || (bCheckDead && pLocalPlayer->RespawnTimer > 0))
     {
         return false;
     }
@@ -3213,12 +3218,6 @@ void HandleOurCmd(unsigned char ucCmdUsed, char* szInput)
     unsigned int uiArgNum               = 1;    // argument number to evaluate
     float fTempY                        = 0.0f; // store cmd input to temp var before setting to prevent inconsistency on failed input
 
-    PlayerClient* pTargetUsed = NULL; // stick id, moveto id
-    PlayerClient* pCampPlayer = NULL; // makecamp player
-    PlayerClient* psTarget    = pTarget;
-    PlayerClient* pLPlayer    = pLocalPlayer;
-    PlayerClient* pChSpawn    = pCharSpawn;
-
     // switch direction of turnhalf randomly
     if (rand() % 100 > 50) STUCK->TurnSize *= -1.0f;
     // call bardcheck function upon command usage instead of onpulse
@@ -3269,7 +3268,7 @@ void HandleOurCmd(unsigned char ucCmdUsed, char* szInput)
             if (!CURCAMP->On)
             {
                 PAUSE->TimeStop();
-                CAMP->Activate(pChSpawn->Y, pChSpawn->X);
+                CAMP->Activate(pLocalPlayer->Y, pLocalPlayer->X);
                 sprintf_s(szMsg, "\ay%s\aw:: MakeCamp actived. Y(\ag%.2f\ax) X(\ag%.2f\ax) Radius(\ag%.2f\ax) Leash(%s) LeashLen(\ag%.2f\ax) Min(\ag%d\ax) Max(\ag%d\ax)", PLUGIN_NAME, CURCAMP->Y, CURCAMP->X, CURCAMP->Radius, CURCAMP->Leash ? "\agon\ax" : "\aroff\ax", CURCAMP->Length, CAMP->Min, CAMP->Max);
                 WriteLine(szMsg, V_MAKECAMPV);
                 break;
@@ -3278,17 +3277,17 @@ void HandleOurCmd(unsigned char ucCmdUsed, char* szInput)
             break;
         case CMD_STICK:
             EndPreviousCmd(true);
-            if (psTarget)
+            if (pTarget)
             {
                 // prevent sticking to self/mount
-                if (ME->IsMe(psTarget))
+                if (ME->IsMe(pTarget))
                 {
                     SpewMUError(ERR_STICKSELF);
                     break;
                 }
                 STICK->TurnOn();
                 MOVE->DoStand();
-                sprintf_s(szMsg, "\ay%s\aw:: You are now sticking to \ag%s\ax.", PLUGIN_NAME, psTarget->DisplayedName);
+                sprintf_s(szMsg, "\ay%s\aw:: You are now sticking to \ag%s\ax.", PLUGIN_NAME, pTarget->DisplayedName);
                 WriteLine(szMsg, V_STICKV);
                 break;
             }
@@ -3473,7 +3472,7 @@ void HandleOurCmd(unsigned char ucCmdUsed, char* szInput)
             case CMD_MAKECAMP:
                 PAUSE->PausedMU = false;
                 PAUSE->TimeStop();
-                CAMP->Activate(pChSpawn->Y, pChSpawn->X);
+                CAMP->Activate(pLocalPlayer->Y, pLocalPlayer->X);
                 GetArg(szCurrentArg, szInput, uiArgNum++);
                 if (isdigit(szCurrentArg[0]))
                 {
@@ -3577,11 +3576,11 @@ void HandleOurCmd(unsigned char ucCmdUsed, char* szInput)
                 float fValue = GetFloatFromString(szCurrentArg, 0.0f);
                 if (bUsingY)
                 {
-                    MOVETO->Activate(fValue, pChSpawn->X, 0.0f);
+                    MOVETO->Activate(fValue, pLocalPlayer->X, 0.0f);
                 }
                 else
                 {
-                    MOVETO->Activate(pChSpawn->Y, fValue, 0.0f);
+                    MOVETO->Activate(pLocalPlayer->Y, fValue, 0.0f);
                 }
                 GetArg(szCurrentArg, szInput, uiArgNum);
             }
@@ -3599,6 +3598,9 @@ void HandleOurCmd(unsigned char ucCmdUsed, char* szInput)
             EndPreviousCmd(true);
         }
     }
+
+	PlayerClient* pTargetUsed = nullptr; // stick id, moveto id
+	PlayerClient* pCampPlayer = nullptr; // makecamp player
 
     while (*szCurrentArg)
     {
@@ -3629,10 +3631,10 @@ void HandleOurCmd(unsigned char ucCmdUsed, char* szInput)
         else if (!_strnicmp(szCurrentArg, "id", 3) && ucCmdUsed != CMD_MAKECAMP)
         {
             EndPreviousCmd(true, ucCmdUsed, true);
-            PlayerClient* pByID = NULL;
             GetArg(szCurrentArg, szInput, uiArgNum);
             if (*szCurrentArg)
             {
+				PlayerClient* pByID = nullptr;
                 char* pNotNum = NULL;
                 int iValid = strtoul(szCurrentArg, &pNotNum, 10);
                 // strtoul verifies the arg is 100% numerical, atoi/atof do not
@@ -3661,14 +3663,14 @@ void HandleOurCmd(unsigned char ucCmdUsed, char* szInput)
                     pTargetUsed = NULL;
                 }
             }
-            else if (psTarget)
+            else if (pTarget)
             {
-                if (ME->IsMe(psTarget))
+                if (ME->IsMe(pTarget))
                 {
                     SpewMUError(ERR_BADSPAWN);
                     return;
                 }
-                pTargetUsed = psTarget; // only use target if its not ourself
+                pTargetUsed = pTarget; // only use target if its not ourself
             }
             if (!pTargetUsed)
             {
@@ -3754,16 +3756,16 @@ void HandleOurCmd(unsigned char ucCmdUsed, char* szInput)
             }
             else if (!_strnicmp(szCurrentArg, "hold", 5))
             {
-                if (psTarget)
+                if (pTarget)
                 {
-                    if (ME->IsMe(psTarget))
+                    if (ME->IsMe(pTarget))
                     {
                         sprintf_s(szMsg, "\ay%s\aw:: (\arERROR\ax) You cannot stick hold to yourself.", PLUGIN_NAME);
                         WriteLine(szMsg, V_ERRORS);
                         EndPreviousCmd(true);
                         return;
                     }
-                    pTargetUsed     = psTarget;
+                    pTargetUsed     = pTarget;
                     STICK->HoldID   = pTargetUsed->SpawnID;
                     STICK->HoldType = GetSpawnType(pTargetUsed);
                     STICK->Hold     = true;
@@ -4051,20 +4053,14 @@ void HandleOurCmd(unsigned char ucCmdUsed, char* szInput)
             {
                 GetArg(szCurrentArg, szInput, uiArgNum++);
                 float fArg = GetFloatFromString(szCurrentArg, 0.0f);
-                if (szCurrentArg[0] == '-')
+                if (fArg < 0.0f)
                 {
                     MOVETO->Mod = fArg;
                     MOVETO->Dist += MOVETO->Mod;
                 }
-                else if (isdigit(szCurrentArg[0]))
-                {
-                    MOVETO->Dist = (fArg >= 1.0f) ? fArg : MOVETO->Dist;
-                }
                 else
                 {
-                    sprintf_s(szMsg, "\ay%s\aw:: (\arERROR\ax) Incorrectly used \ay/moveto dist [#]\ax", PLUGIN_NAME);
-                    WriteLine(szMsg, V_ERRORS);
-                    return;
+                    MOVETO->Dist = (fArg >= 1.0f) ? fArg : MOVETO->Dist;
                 }
                 SET_M->Dist = MOVETO->Dist;
                 SET_M->Mod  = MOVETO->Mod;
@@ -4076,21 +4072,14 @@ void HandleOurCmd(unsigned char ucCmdUsed, char* szInput)
             {
                 GetArg(szCurrentArg, szInput, uiArgNum++);
                 float fValue = GetFloatFromString(szCurrentArg, 0.0f);
-                if (szCurrentArg[0] == '-')
+                if (fValue < 0.0f)
                 {
                     MOVETO->Mod = fValue;
                     MOVETO->Dist += MOVETO->Mod;
                 }
-                else if (isdigit(szCurrentArg[0]))
-                {
-                    float fvalue = fValue;
-                    MOVETO->Dist = (fvalue >= 1.0f) ? fvalue : MOVETO->Dist;
-                }
                 else
                 {
-                    sprintf_s(szMsg, "\ay%s\aw:: (\arERROR\ax) Incorrectly used \ay/moveto mdist [#]\ax", PLUGIN_NAME);
-                    WriteLine(szMsg, V_ERRORS);
-                    return;
+                    MOVETO->Dist = (fValue >= 1.0f) ? fValue : MOVETO->Dist;
                 }
                 SET_M->Dist = MOVETO->Dist;
                 SET_M->Mod  = MOVETO->Mod;
@@ -4274,9 +4263,9 @@ void HandleOurCmd(unsigned char ucCmdUsed, char* szInput)
                 {
                     pCampPlayer = GetSpawnByName(szCurrentArg);
                 }
-                else if (psTarget && psTarget->Type == SPAWN_PLAYER)
+                else if (pTarget && pTarget->Type == SPAWN_PLAYER)
                 {
-                    pCampPlayer = GetSpawnByID(psTarget->SpawnID);
+                    pCampPlayer = GetSpawnByID(pTarget->SpawnID);
                 }
                 if (!pCampPlayer)
                 {
@@ -4442,7 +4431,7 @@ void HandleOurCmd(unsigned char ucCmdUsed, char* szInput)
     {
         if (!STICK->Hold)
         {
-            if (!psTarget)
+            if (!pTarget)
             {
                 // dont continue if no target unless 'always' (returns) or 'id || hold'
                 EndPreviousCmd(true);
@@ -4450,16 +4439,16 @@ void HandleOurCmd(unsigned char ucCmdUsed, char* szInput)
                 return;
             }
             // if self targeted and not 'always' or 'id || hold'
-            if (ME->IsMe(psTarget))
+            if (ME->IsMe(pTarget))
             {
                 EndPreviousCmd(true);
                 SpewMUError(ERR_STICKSELF);
                 return;
             }
             // else setup output msg
-            sprintf_s(szTempID, "%s", psTarget->DisplayedName);
+            sprintf_s(szTempID, "%s", pTarget->DisplayedName);
         }
-        else if (pTargetUsed || (STICK->Hold && psTarget))
+        else if (pTargetUsed || (STICK->Hold && pTarget))
         {
             // setup output msg for 'id || hold'
             sprintf_s(szTempID, "%s", pTargetUsed->DisplayedName);
@@ -4592,20 +4581,19 @@ void MakeCampWrapper(PlayerClient* pLPlayer, char* szLine)
 void CalcOurAngle(PlayerClient* pLPlayer, char* szLine)
 {
     if (!ValidIngame() || !pTarget) return;
-    PlayerClient* psTarget = pTarget;
-    PlayerClient* pChSpawn = pCharSpawn;
-    float fAngle   = MOVE->AngDist(psTarget->Heading, pChSpawn->Heading);
-    float fReqHead = MOVE->SaneHead(atan2(psTarget->X - pChSpawn->X, psTarget->Y - pChSpawn->Y) * HEADING_HALF / fPI);
-    fReqHead = pChSpawn->Heading - fReqHead;
-    float fMeleeRng = get_melee_range(pLocalPlayer, psTarget);
+
+    float fAngle   = MOVE->AngDist(pTarget->Heading, pLocalPlayer->Heading);
+    float fReqHead = MOVE->SaneHead(atan2(pTarget->X - pLocalPlayer->X, pTarget->Y - pLocalPlayer->Y) * HEADING_HALF / fPI);
+    fReqHead = pLocalPlayer->Heading - fReqHead;
+    float fMeleeRng = get_melee_range(pLocalPlayer, pTarget);
     float fStickRng = fMeleeRng * STICK->DistModP + STICK->DistMod;
     float fSaneH = MOVE->SaneHead(fReqHead);
-    float fDist   = GetDistance(pChSpawn, psTarget);
-    float fDist3D = GetDistance3D(pChSpawn->X, pChSpawn->Y, pChSpawn->Z, psTarget->X, psTarget->Y, psTarget->Z);
+    float fDist   = GetDistance(pLocalPlayer, pTarget);
+    float fDist3D = GetDistance3D(pLocalPlayer->X, pLocalPlayer->Y, pLocalPlayer->Z, pTarget->X, pTarget->Y, pTarget->Z);
     char szTempOut[MAX_STRING] = {0};
     sprintf_s(szTempOut, "\ay%s\aw:: AngularDist ( \ag%.2f\ax ) Adjust ( \ag%.2f\ax ) Sane ( \ag%.2f\ax ) Dist ( \ag%.2f\ax ) Dist3D ( \ag%.2f\ax ) Melee ( \ag%f\ax ) Stick ( \ag%f\ax)", PLUGIN_NAME, fAngle, fReqHead, fSaneH, fDist, fDist3D, fMeleeRng, fStickRng);
     WriteChatf("%s",szTempOut);
-    sprintf_s(szTempOut, " - Walking ( %s )  RunSpeed ( \ag%.2f\ax ) SpeedMultiplier ( \ag%.2f\ax )", (*EQADDR_RUNWALKSTATE) ? "\arno\ax" : "\agyes\ax", pChSpawn->RunSpeed, pChSpawn->SpeedMultiplier);
+    sprintf_s(szTempOut, " - Walking ( %s )  RunSpeed ( \ag%.2f\ax ) SpeedMultiplier ( \ag%.2f\ax )", (*EQADDR_RUNWALKSTATE) ? "\arno\ax" : "\agyes\ax", pLocalPlayer->RunSpeed, pLocalPlayer->SpeedMultiplier);
     WriteChatf("%s",szTempOut);
 }
 
@@ -4657,7 +4645,6 @@ bool ToggleSetting(const char* pszToggleOutput, bool* pbEvalThis, bool* pbUsedTo
 void SaveConfigSetting(BYTE ucCmdUsed,char*Value,char*)
 {
     char szSection[MAX_STRING];
-    char szTemp[MAX_STRING];
     switch(ucCmdUsed)
     {
     case CMD_MAKECAMP:
@@ -4769,6 +4756,7 @@ void SaveConfigSetting(BYTE ucCmdUsed,char*Value,char*)
     WritePrivateProfileString(szSection,      "TurnHalf",                STUCK->TurnHalf                                        ? "on" : "off",                                       INIFileName);
 
     // check if we want to explicitly ignore this chars custom section
+	char szTemp[MAX_STRING];
     GetPrivateProfileString(szCharName,       "DisregardMe",             "false", szTemp, MAX_STRING,                                                                                 INIFileName);
     if (SET->SaveByChar && _strnicmp(szTemp, "true", 5))
     {
@@ -5274,14 +5262,16 @@ void ChangeSetting(unsigned char ucCmdUsed, bool bToggle, char szSetting[MAX_STR
     else if (!bCustomMsg && bSetDigit)
     {
         float fDigit = GetFloatFromString(szSetDigit, 0.0f);
+		unsigned int uiDigit = static_cast<unsigned int>(fDigit);
+		int iDigit = static_cast<int>(uiDigit);
         if (!_strnicmp(szParameter, "pulsecheck", 11))
         {
-            STUCK->Check = (unsigned int)fDigit > 1 ? (unsigned int)fDigit : STUCK->Check;
+            STUCK->Check = uiDigit > 1 ? uiDigit : STUCK->Check;
             sprintf_s(szMsg, "\ay%s\aw:: StuckLogic pulse check rate set to \ag%d\ax pulses.", PLUGIN_NAME, STUCK->Check);
         }
         else if (!_strnicmp(szParameter, "pulseunstuck", 13))
         {
-            STUCK->Unstuck = (unsigned int)fDigit > 1 ? (unsigned int)fDigit : STUCK->Unstuck;
+            STUCK->Unstuck = uiDigit > 1 ? uiDigit : STUCK->Unstuck;
             sprintf_s(szMsg, "\ay%s\aw:: StuckLogic pulse unstuck value set to \ag%d\ax pulses.", PLUGIN_NAME, STUCK->Unstuck);
         }
         else if (!_strnicmp(szParameter, "diststuck", 10))
@@ -5291,35 +5281,35 @@ void ChangeSetting(unsigned char ucCmdUsed, bool bToggle, char szSetting[MAX_STR
         }
         else if (!_strnicmp(szParameter, "campmindelay", 13))
         {
-            SET_CAMP->MinDelay(static_cast<int>(fDigit));
+            SET_CAMP->MinDelay(iDigit);
             CAMP->MinDelay(SET_CAMP->Min);
             sprintf_s(szMsg, "\ay%s\aw:: Mindelay for camp return set to \ag%d", PLUGIN_NAME, SET_CAMP->Min);
         }
         else if (!_strnicmp(szParameter, "campmaxdelay", 13))
         {
-            SET_CAMP->MaxDelay(static_cast<int>(fDigit));
+            SET_CAMP->MaxDelay(iDigit);
             CAMP->MaxDelay(SET_CAMP->Max);
             sprintf_s(szMsg, "\ay%s\aw:: Maxdelay for camp return set to \ag%d", PLUGIN_NAME, CAMP->Max);
         }
         else if (!_strnicmp(szParameter, "pausemindelay", 14))
         {
-            PAUSE->MinDelay(static_cast<int>(fDigit));
+            PAUSE->MinDelay(iDigit);
             sprintf_s(szMsg, "\ay%s\aw:: Mindelay for mpause/mousepause set to \ag%d", PLUGIN_NAME, PAUSE->Min);
         }
         else if (!_strnicmp(szParameter, "pausemaxdelay", 14))
         {
-            PAUSE->MaxDelay(static_cast<int>(fDigit));
+            PAUSE->MaxDelay(iDigit);
             sprintf_s(szMsg, "\ay%s\aw:: Maxdelay for mpause/mousepause set to \ag%d", PLUGIN_NAME, PAUSE->Max);
         }
         else if (!_strnicmp(szParameter, "strafemindelay", 15))
         {
-            SET_S->MinDelay(static_cast<int>(fDigit));
+            SET_S->MinDelay(iDigit);
             STICK->MinDelay(SET_S->Min);
             sprintf_s(szMsg, "\ay%s\aw:: Mindelay for strafe resume set to \ag%d", PLUGIN_NAME, SET_S->Min);
         }
         else if (!_strnicmp(szParameter, "strafemaxdelay", 15))
         {
-            SET_S->MaxDelay(static_cast<int>(fDigit));
+            SET_S->MaxDelay(iDigit);
             STICK->MaxDelay(SET_S->Max);
             sprintf_s(szMsg, "\ay%s\aw:: Maxdelay for strafe resume set to \ag%d", PLUGIN_NAME, SET_S->Max);
         }
@@ -5438,7 +5428,7 @@ void ChangeSetting(unsigned char ucCmdUsed, bool bToggle, char szSetting[MAX_STR
         }
         else if (!_strnicmp(szParameter, "font", 5))
         {
-            int iValid = static_cast<int>(fDigit) > 0 && static_cast<int>(fDigit) < 11 ? static_cast<int>(fDigit) : 0;
+            int iValid = iDigit > 0 && iDigit < 11 ? iDigit : 0;
             if (iValid == 0)
             {
                 sprintf_s(szMsg, "\ay%s\aw:: \arError\ax - Font must be between 1 and 10.", PLUGIN_NAME);
@@ -5484,8 +5474,7 @@ void ChangeSetting(unsigned char ucCmdUsed, bool bToggle, char szSetting[MAX_STR
 void MainProcess(unsigned char ucCmdUsed)
 {
     PCHARINFO  pChData     = (PCHARINFO)pCharData;
-    PlayerClient* pChSpawn    = pCharSpawn;
-    PlayerClient* pLPlayer    = pLocalPlayer;
+
     PlayerClient* psTarget    = STICK->Hold ? GetSpawnByID(STICK->HoldID) : pTarget;
     PlayerClient* pCampPlayer = GetSpawnByID(CURCAMP->PcID);
 
@@ -5515,7 +5504,7 @@ void MainProcess(unsigned char ucCmdUsed)
     // end /makecamp player handling
 
     // handle null pointers for all commands
-    if (!pChData || !pLPlayer || !pChSpawn->SpawnID || !GetPcProfile())
+    if (!pChData || !pLocalPlayer || !pLocalPlayer->SpawnID || !GetPcProfile())
     {
         sprintf_s(szMsg, "\ay%s\aw:: Null pointer, turning off current command", PLUGIN_NAME);
         WriteLine(szMsg, V_SILENCE);
@@ -5531,14 +5520,14 @@ void MainProcess(unsigned char ucCmdUsed)
     static bool sbJumping = false; // true if we executed a jump in stucklogic
 
     // variables reflecting character state
-    float fSpeedMulti  = pChSpawn->SpeedMultiplier;
-    bool  bSwimming    = pChSpawn->FeetWet                                      ? true : false; // used by stucklogic & uw
-    bool  bMounted     = pChSpawn->Mount                                           ? true : false; // used by stucklogic
+    float fSpeedMulti  = pLocalPlayer->SpeedMultiplier;
+    bool  bSwimming    = pLocalPlayer->FeetWet                                      ? true : false; // used by stucklogic & uw
+    bool  bMounted     = pLocalPlayer->Mount                                           ? true : false; // used by stucklogic
     bool  bStunned     = pChData->Stunned                                          ? true : false; // used by stucklogic and autopause
-    bool  bLevitated   = (pChSpawn->mPlayerPhysicsClient.Levitate == 2)                                 ? true : false; // used by stucklogic
-    bool  bRooted      = (fSpeedMulti == -10000.0f  || pChSpawn->RunSpeed < -0.4f) ? true : false; // we return without moving when rooted
-    bool  bSnared      = (fSpeedMulti < 0.0f        || pChSpawn->RunSpeed < 0.0f)  ? true : false; // used by stucklogic
-    bool  bInJump      = (pChSpawn->Animation == 19 || pChSpawn->Animation == 20)  ? true : false; // used by trytojump
+    bool  bLevitated   = (pLocalPlayer->mPlayerPhysicsClient.Levitate == 2)                                 ? true : false; // used by stucklogic
+    bool  bRooted      = (fSpeedMulti == -10000.0f  || pLocalPlayer->RunSpeed < -0.4f) ? true : false; // we return without moving when rooted
+    bool  bSnared      = (fSpeedMulti < 0.0f        || pLocalPlayer->RunSpeed < 0.0f)  ? true : false; // used by stucklogic
+    bool  bInJump      = (pLocalPlayer->Animation == 19 || pLocalPlayer->Animation == 20)  ? true : false; // used by trytojump
 
     if (!bInJump)                              sbJumping = false;
     if (bSwimming && SET->AutoUW) STICK->UW = MOVETO->UW = true;
@@ -5552,15 +5541,15 @@ void MainProcess(unsigned char ucCmdUsed)
         {
             // set last loc to current loc if this is first evaluation for current command
             // so that comparison is near-zero and below 'if' will be false
-            SUMMON->Y = pChSpawn->Y;
-            SUMMON->X = pChSpawn->X;
+            SUMMON->Y = pLocalPlayer->Y;
+            SUMMON->X = pLocalPlayer->X;
         }
 
         // get the distance moved
-        SUMMON->CurDist = fabs(GetDistance(SUMMON->Y, SUMMON->X, pChSpawn->Y, pChSpawn->X));
+        SUMMON->CurDist = fabs(GetDistance(SUMMON->Y, SUMMON->X, pLocalPlayer->Y, pLocalPlayer->X));
         // store current location for next pulse
-        SUMMON->Y = pChSpawn->Y;
-        SUMMON->X = pChSpawn->X;
+        SUMMON->Y = pLocalPlayer->Y;
+        SUMMON->X = pLocalPlayer->X;
 
         // if distance moved is larger than user value, halt commands & lock plugin
         if (SUMMON->CurDist > SET->DistSummon)
@@ -5582,7 +5571,7 @@ void MainProcess(unsigned char ucCmdUsed)
     {
         static bool sbAPOutput = false;
         // convert to long because spellid is defined as unsigned but data can be negative to represent not casting
-        if (((long)(pChSpawn->CastingData.SpellID) >= 0 && !pMU->Bard) || (pChSpawn->StandState != STANDSTATE_STAND && pChSpawn->StandState != STANDSTATE_DUCK) || bStunned || bRooted || (ucCmdUsed == CMD_STICK && ME->IsMe(psTarget)))
+        if (((long)(pLocalPlayer->CastingData.SpellID) >= 0 && !pMU->Bard) || (pLocalPlayer->StandState != STANDSTATE_STAND && pLocalPlayer->StandState != STANDSTATE_DUCK) || bStunned || bRooted || (ucCmdUsed == CMD_STICK && ME->IsMe(psTarget)))
         {
             if ((uiVerbLevel & V_AUTOPAUSE) == V_AUTOPAUSE && !sbAPOutput)
             {
@@ -5611,7 +5600,7 @@ void MainProcess(unsigned char ucCmdUsed)
 
         // assign distance
         STICK->DifDist = STICK->CurDist;
-        STICK->CurDist = fabs(GetDistance(pChSpawn, psTarget));
+        STICK->CurDist = fabs(GetDistance(pLocalPlayer, psTarget));
 
         static bool sbSelfOutput = false;
         // if we've changed targets mid-stick or this is the first pulse, dont trigger stucklogic or breakonwarp
@@ -5709,7 +5698,7 @@ void MainProcess(unsigned char ucCmdUsed)
     // makecamp handling
     if (!CAMP->Returning && CURCAMP->On)
     {
-        CAMP->CurDist = GetDistance(pChSpawn->Y, pChSpawn->X, CURCAMP->Pc ? pCampPlayer->Y : CURCAMP->Y, CURCAMP->Pc ? pCampPlayer->X : CURCAMP->X);
+        CAMP->CurDist = GetDistance(pLocalPlayer->Y, pLocalPlayer->X, CURCAMP->Pc ? pCampPlayer->Y : CURCAMP->Y, CURCAMP->Pc ? pCampPlayer->X : CURCAMP->X);
         CAMP->DifDist = GetDistance(STICK->On ? psTarget->Y : MOVETO->Y, STICK->On ? psTarget->X : MOVETO->X, CURCAMP->Pc ? pCampPlayer->Y : CURCAMP->Y, CURCAMP->Pc ? pCampPlayer->X : CURCAMP->X);
 
         // break from command if it would exceed active leash
@@ -5803,7 +5792,7 @@ void MainProcess(unsigned char ucCmdUsed)
                 }
                 if (psTarget && (CURCAMP->RedoStick || CURCAMP->RedoCircle))
                 {
-                    fNewHeading = MOVE->SaneHead((atan2(HeadBack.Y - pChSpawn->Y, HeadBack.X - pChSpawn->X) * HEADING_HALF / fPI));
+                    fNewHeading = MOVE->SaneHead((atan2(HeadBack.Y - pLocalPlayer->Y, HeadBack.X - pLocalPlayer->X) * HEADING_HALF / fPI));
                     MOVE->TryMove(GO_FORWARD, MU_WALKOFF, fNewHeading, HeadBack.Y, HeadBack.X);
                 }
             }
@@ -5825,7 +5814,7 @@ void MainProcess(unsigned char ucCmdUsed)
     // assign values for circle
     if (ucCmdUsed == CMD_CIRCLE)
     {
-        float fUseCirYX[2] = {(pChSpawn->Y - CIRCLE->Y), (pChSpawn->X - CIRCLE->X)};
+        float fUseCirYX[2] = {(pLocalPlayer->Y - CIRCLE->Y), (pLocalPlayer->X - CIRCLE->X)};
         CIRCLE->CurDist = sqrt(fUseCirYX[0] * fUseCirYX[0] + fUseCirYX[1] * fUseCirYX[1]);
         if (CIRCLE->CurDist < CIRCLE->Radius * (2.0f / 3.0f)) bUseStuck = false;
     }
@@ -5835,12 +5824,12 @@ void MainProcess(unsigned char ucCmdUsed)
     {
         if (MOVETO->PreciseY)
         {
-            MOVETO->CurDist = fabs(GetDistance(pChSpawn->Y, 0.0f, MOVETO->Y, 0.0f));
+            MOVETO->CurDist = fabs(GetDistance(pLocalPlayer->Y, 0.0f, MOVETO->Y, 0.0f));
             MOVETO->DifDist = MOVETO->DistY;
         }
         else if (MOVETO->PreciseX)
         {
-            MOVETO->CurDist = fabs(GetDistance(0.0f, pChSpawn->X, 0.0f, MOVETO->X));
+            MOVETO->CurDist = fabs(GetDistance(0.0f, pLocalPlayer->X, 0.0f, MOVETO->X));
             MOVETO->DifDist = MOVETO->DistX;
         }
         else
@@ -5859,15 +5848,15 @@ void MainProcess(unsigned char ucCmdUsed)
                         PolarSpot(pCampPlayer->Y, pCampPlayer->X, 0.0f, CURCAMP->Bearing, CURCAMP->ScatDist, CURCAMP->ScatSize, &CAMP->Y, &CAMP->X);
                     }
                 }
-                MOVETO->CurDist = fabs(GetDistance(pChSpawn->Y, pChSpawn->X, CAMP->Y, CAMP->X));
+                MOVETO->CurDist = fabs(GetDistance(pLocalPlayer->Y, pLocalPlayer->X, CAMP->Y, CAMP->X));
             }
             else if (MOVETO->Z == 0.0f)
             {
-                MOVETO->CurDist = fabs(GetDistance(pChSpawn->Y, pChSpawn->X, MOVETO->Y, MOVETO->X));
+                MOVETO->CurDist = fabs(GetDistance(pLocalPlayer->Y, pLocalPlayer->X, MOVETO->Y, MOVETO->X));
             }
             else
             {
-                MOVETO->CurDist = fabs(GetDistance3D(pChSpawn->Y, pChSpawn->X, pChSpawn->Z, MOVETO->Y, MOVETO->X, MOVETO->Z));
+                MOVETO->CurDist = fabs(GetDistance3D(pLocalPlayer->Y, pLocalPlayer->X, pLocalPlayer->Z, MOVETO->Y, MOVETO->X, MOVETO->Z));
             }
             MOVETO->DifDist = MOVETO->Dist;
         }
@@ -5889,18 +5878,18 @@ void MainProcess(unsigned char ucCmdUsed)
     {
         // use 3D to compare Z so stucklogic doesn't fire if we are moving more z than y/x (up/down slopes)
         // if bJumping then dont check z axis movement
-        STUCK->DifDist = (bLevitated || (sbJumping && bInJump)) ? GetDistance(pChSpawn->Y, pChSpawn->X, STUCK->Y, STUCK->X) : GetDistance3D(pChSpawn->Y, pChSpawn->X, pChSpawn->Z, STUCK->Y, STUCK->X, STUCK->Z);
+        STUCK->DifDist = (bLevitated || (sbJumping && bInJump)) ? GetDistance(pLocalPlayer->Y, pLocalPlayer->X, STUCK->Y, STUCK->X) : GetDistance3D(pLocalPlayer->Y, pLocalPlayer->X, pLocalPlayer->Z, STUCK->Y, STUCK->X, STUCK->Z);
 
         // sanity check, if we've moved more than 5 (summon, knockback, user)
         // it will throw off our readjustment, so keep the last value instead
         if (STUCK->DifDist < 5.0f) STUCK->CurDist = MovingAvg(STUCK->DifDist, STUCK->Check);
         //SpewDebug(DBG_STUCK, "STUCK->CurDist = %.2f, fPulseMoved %.2f", STUCK->CurDist, fPulseMoved);
 
-        STUCK->Y = pChSpawn->Y;
-        STUCK->X = pChSpawn->X;
-        STUCK->Z = pChSpawn->Z;
+        STUCK->Y = pLocalPlayer->Y;
+        STUCK->X = pLocalPlayer->X;
+        STUCK->Z = pLocalPlayer->Z;
 
-        //SpewDebug(DBG_DISABLE, "runspeed %.2f and walkspeed %.2f and speedrun %.2f and speedmultiplier %.2f", pChSpawn->RunSpeed, pChSpawn->WalkSpeed, pChSpawn->SpeedRun, pChSpawn->SpeedMultiplier);
+        //SpewDebug(DBG_DISABLE, "runspeed %.2f and walkspeed %.2f and speedrun %.2f and speedmultiplier %.2f", pLocalPlayer->RunSpeed, pLocalPlayer->WalkSpeed, pLocalPlayer->SpeedRun, pLocalPlayer->SpeedMultiplier);
         if (bSnared || bRooted)
         {
             // dont use stucklogic if snared
@@ -5944,7 +5933,7 @@ void MainProcess(unsigned char ucCmdUsed)
             ( (STUCK->CurDist < STUCK->Dist * fSpeedMulti && !bSwimming && !bMounted) ||
 
             // maybe handle water and mounts on their own system?
-            (bSwimming && static_cast<double>(STUCK->CurDist) < 0.0010) ||
+            (bSwimming && STUCK->CurDist < 0.0010f) ||
 
             (bMounted && STUCK->CurDist < (STUCK->Dist + fSpeedMulti) / 3.0f) )
 
@@ -5975,18 +5964,18 @@ void MainProcess(unsigned char ucCmdUsed)
                     switch (ucCmdUsed)
                     {
                     case CMD_STICK:
-                        fOrigHead = MOVE->SaneHead((atan2(psTarget->X - pChSpawn->X, psTarget->Y - pChSpawn->Y) * HEADING_HALF) / fPI);
+                        fOrigHead = MOVE->SaneHead((atan2(psTarget->X - pLocalPlayer->X, psTarget->Y - pLocalPlayer->Y) * HEADING_HALF) / fPI);
                         break;
                     case CMD_MOVETO:
                         if (CAMP->Returning)
                         {
-                            fOrigHead = MOVE->SaneHead((atan2(CAMP->X - pChSpawn->X, CAMP->Y - pChSpawn->Y) * HEADING_HALF) / fPI);
+                            fOrigHead = MOVE->SaneHead((atan2(CAMP->X - pLocalPlayer->X, CAMP->Y - pLocalPlayer->Y) * HEADING_HALF) / fPI);
                             break;
                         }
-                        fOrigHead = MOVE->SaneHead((atan2(MOVETO->X - pChSpawn->X, MOVETO->Y - pChSpawn->Y) * HEADING_HALF) / fPI);
+                        fOrigHead = MOVE->SaneHead((atan2(MOVETO->X - pLocalPlayer->X, MOVETO->Y - pLocalPlayer->Y) * HEADING_HALF) / fPI);
                         break;
                     case CMD_CIRCLE:
-                        fOrigHead = (atan2(pChSpawn->Y - CIRCLE->Y, CIRCLE->X - pChSpawn->X) * CIRCLE_HALF) / fPI * CIRCLE_QUARTER;
+                        fOrigHead = (atan2(pLocalPlayer->Y - CIRCLE->Y, CIRCLE->X - pLocalPlayer->X) * CIRCLE_HALF) / fPI * CIRCLE_QUARTER;
                         fOrigHead += CIRCLE_QUARTER * (CIRCLE->Radius / CIRCLE->CurDist);
                         fOrigHead = MOVE->SaneHead(fOrigHead *= HEADING_MAX / CIRCLE_MAX);
                     }
@@ -6000,7 +5989,7 @@ void MainProcess(unsigned char ucCmdUsed)
                 // if STUCK->StuckInc == multiple of 4 (try to turn 1 increment, every 4 pulses of being stuck)
                 if ((STUCK->StuckInc & 3) == 0)
                 {
-                    fNewHeading = MOVE->SaneHead(pChSpawn->Heading + STUCK->TurnSize);
+                    fNewHeading = MOVE->SaneHead(pLocalPlayer->Heading + STUCK->TurnSize);
                     //SpewDebug(DBG_STUCK, "Stucklogic turned, New heading is %.2f", fNewHeading);
 
                     // if enabled, check if we are halfway away from our destination, reset heading to original heading and start again
@@ -6037,11 +6026,11 @@ void MainProcess(unsigned char ucCmdUsed)
     switch (ucCmdUsed)
     {
     case CMD_STICK:
-        if (!STICK->Snaproll) fNewHeading = MOVE->SaneHead(atan2(psTarget->X - pChSpawn->X, psTarget->Y - pChSpawn->Y) * HEADING_HALF / fPI);
+        if (!STICK->Snaproll) fNewHeading = MOVE->SaneHead(atan2(psTarget->X - pLocalPlayer->X, psTarget->Y - pLocalPlayer->Y) * HEADING_HALF / fPI);
         // jump ahead to stick handling
         break;
     case CMD_CIRCLE:
-        fNewHeading = (!CIRCLE->CCW != CIRCLE->Backward) ? (atan2(pChSpawn->Y - CIRCLE->Y, CIRCLE->X - pChSpawn->X) * CIRCLE_HALF) / fPI : (atan2(CIRCLE->Y - pChSpawn->Y, pChSpawn->X - CIRCLE->X) * CIRCLE_HALF) / fPI;
+        fNewHeading = (!CIRCLE->CCW != CIRCLE->Backward) ? (atan2(pLocalPlayer->Y - CIRCLE->Y, CIRCLE->X - pLocalPlayer->X) * CIRCLE_HALF) / fPI : (atan2(CIRCLE->Y - pLocalPlayer->Y, pLocalPlayer->X - CIRCLE->X) * CIRCLE_HALF) / fPI;
         CIRCLE->CCW ?  fNewHeading -= CIRCLE_QUARTER + CIRCLE_QUARTER * (CIRCLE->Radius / CIRCLE->CurDist) : fNewHeading += CIRCLE_QUARTER + CIRCLE_QUARTER * (CIRCLE->Radius / CIRCLE->CurDist);
         MOVE->NewHead(MOVE->SaneHead(fNewHeading *= HEADING_MAX / CIRCLE_MAX));
         CIRCLE->Backward ? MOVE->DoMove(GO_BACKWARD) : MOVE->DoMove(GO_FORWARD);
@@ -6053,17 +6042,17 @@ void MainProcess(unsigned char ucCmdUsed)
             if (psTarget && MOVETO->UW)
             {
                 double dLookAngle = static_cast<double>(atan2(psTarget->Z + psTarget->AvatarHeight * StateHeightMultiplier(psTarget->StandState) -
-                    pChSpawn->Z - pChSpawn->AvatarHeight * StateHeightMultiplier(pChSpawn->StandState), fabs(GetDistance3D(pChSpawn->Y, pChSpawn->X, pChSpawn->Z, psTarget->Y, psTarget->X, psTarget->Z)))) * HEADING_HALF / PI;
+                    pLocalPlayer->Z - pLocalPlayer->AvatarHeight * StateHeightMultiplier(pLocalPlayer->StandState), fabs(GetDistance3D(pLocalPlayer->Y, pLocalPlayer->X, pLocalPlayer->Z, psTarget->Y, psTarget->X, psTarget->Z)))) * HEADING_HALF / PI;
                 MOVE->NewFace(dLookAngle);
             }
             if (CAMP->Returning)
             {
-                fNewHeading = MOVE->SaneHead(atan2(CAMP->X - pChSpawn->X, CAMP->Y - pChSpawn->Y) * HEADING_HALF / fPI);
+                fNewHeading = MOVE->SaneHead(atan2(CAMP->X - pLocalPlayer->X, CAMP->Y - pLocalPlayer->Y) * HEADING_HALF / fPI);
                 if (MOVETO->UseBack)
                 {
                     if (MOVE->ChangeHead == H_INACTIVE && MOVETO->CurDist < MOVETO->DistBack)
                     {
-                        float fHeadDiff = MOVE->SaneHead(pChSpawn->Heading - fNewHeading);
+                        float fHeadDiff = MOVE->SaneHead(pLocalPlayer->Heading - fNewHeading);
                         if (fHeadDiff >= 200.0f && fHeadDiff <= 300.0f)
                         {
                             MOVE->DoMove(GO_BACKWARD, true, MOVETO->CurDist < 20.0f ? MU_WALKON : MU_WALKOFF);
@@ -6075,12 +6064,12 @@ void MainProcess(unsigned char ucCmdUsed)
                 MOVE->TryMove(GO_FORWARD, (MOVETO->Walk && MOVETO->CurDist < 20.0f) ? MU_WALKON : MU_WALKOFF, fNewHeading, CAMP->Y, CAMP->X);
                 return;
             }
-            fNewHeading = MOVE->SaneHead(atan2(MOVETO->X - pChSpawn->X, MOVETO->Y - pChSpawn->Y) * HEADING_HALF / fPI);
+            fNewHeading = MOVE->SaneHead(atan2(MOVETO->X - pLocalPlayer->X, MOVETO->Y - pLocalPlayer->Y) * HEADING_HALF / fPI);
             if (MOVETO->UseBack)
             {
                 if (MOVE->ChangeHead == H_INACTIVE && MOVETO->CurDist < MOVETO->DistBack)
                 {
-                    float fHeadDiff = MOVE->SaneHead(pChSpawn->Heading - fNewHeading);
+                    float fHeadDiff = MOVE->SaneHead(pLocalPlayer->Heading - fNewHeading);
                     if (fHeadDiff >= 200.0f && fHeadDiff <= 300.0f)
                     {
                         MOVE->DoMove(GO_BACKWARD, true, MOVETO->CurDist < 20.0f ? MU_WALKON : MU_WALKOFF);
@@ -6122,7 +6111,7 @@ void MainProcess(unsigned char ucCmdUsed)
     // -----------------------------------------------------
 
     // diff between cur heading vs. desired heading
-    float fHeadDiff = MOVE->SaneHead(pChSpawn->Heading - fNewHeading);
+    float fHeadDiff = MOVE->SaneHead(pLocalPlayer->Heading - fNewHeading);
 
     // if we are close to the mob and our desired heading change is large, move backwards instead
     if (STICK->UseBack && !STICK->Snaproll && !STICK->Healer && MOVE->ChangeHead == H_INACTIVE && STICK->CurDist < STICK->Dist + STICK->DistBack)
@@ -6144,13 +6133,13 @@ void MainProcess(unsigned char ucCmdUsed)
         if (STICK->UW) // adjust look angle if underwater param or autouw
         {
             double dLookAngle = static_cast<double>(atan2(psTarget->Z + psTarget->AvatarHeight * StateHeightMultiplier(psTarget->StandState) -
-                pChSpawn->Z - pChSpawn->AvatarHeight * StateHeightMultiplier(pChSpawn->StandState), STICK->CurDist)) * HEADING_HALF / PI;
+                pLocalPlayer->Z - pLocalPlayer->AvatarHeight * StateHeightMultiplier(pLocalPlayer->StandState), STICK->CurDist)) * HEADING_HALF / PI;
             MOVE->NewFace(dLookAngle);
         }
     }
 
     // if stucklogic is on and we are ducking while sticking, un-duck
-    if (STUCK->On && pChSpawn->StandState == STANDSTATE_DUCK) MOVE->DoStand();
+    if (STUCK->On && pLocalPlayer->StandState == STANDSTATE_DUCK) MOVE->DoStand();
 
     // move FORWARD ONLY until near stick range (except snaproll)
     if (STICK->CurDist > STICK->Dist + 10.0f && !STICK->Snaproll)
@@ -6162,7 +6151,7 @@ void MainProcess(unsigned char ucCmdUsed)
     // everything below: only if near stick range
 
     // calculate our angular distance
-    float fAngDist     = MOVE->AngDist(psTarget->Heading, pChSpawn->Heading);
+    float fAngDist     = MOVE->AngDist(psTarget->Heading, pLocalPlayer->Heading);
     float fFabsAngDist = fabs(fAngDist);
     bool b3xRange   = (STICK->CurDist <  STICK->Dist * 3) ? true : false;
     bool bAnyStrafe = (STICK->Strafe  || STICK->Front)    ? true : false;
@@ -6174,7 +6163,7 @@ void MainProcess(unsigned char ucCmdUsed)
         if (STICK->Strafe)
         {
             // halt strafing if we are on HoTT
-            if (pMU->CmdStrafe && pLPlayer->SpawnID == pChSpawn->TargetOfTarget)
+            if (pMU->CmdStrafe && pLocalPlayer->SpawnID == pLocalPlayer->TargetOfTarget)
             {
                 MOVE->StopMove(KILL_STRAFE);
             }
@@ -6205,7 +6194,7 @@ void MainProcess(unsigned char ucCmdUsed)
                     }
                     else
                     {
-                        if (STICK->UseFleeing && IsMobFleeing(pChSpawn, psTarget) && (psTarget->HPCurrent * 100 / psTarget->HPMax) < 25)
+                        if (STICK->UseFleeing && IsMobFleeing(pLocalPlayer, psTarget) && (psTarget->HPCurrent * 100 / psTarget->HPMax) < 25)
                         {
                             MOVE->StopMove(KILL_STRAFE);
                         }
@@ -6252,7 +6241,7 @@ void MainProcess(unsigned char ucCmdUsed)
                     // processing for '/stick pin'
                     else if (STICK->Pin)
                     {
-                        if (STICK->UseFleeing && IsMobFleeing(pChSpawn, psTarget) && (psTarget->HPCurrent * 100 / psTarget->HPMax) < 25)
+                        if (STICK->UseFleeing && IsMobFleeing(pLocalPlayer, psTarget) && (psTarget->HPCurrent * 100 / psTarget->HPMax) < 25)
                         {
                             MOVE->StopMove(KILL_STRAFE);
                         }
@@ -6301,10 +6290,10 @@ void MainProcess(unsigned char ucCmdUsed)
         }
         else if (STICK->Front)
         {
-            if (SET->Spin || pLPlayer->SpawnID == pChSpawn->TargetOfTarget)
+            if (SET->Spin || pLocalPlayer->SpawnID == pLocalPlayer->TargetOfTarget)
             {
                 // if im the target of target or deliberately want to spin if lose aggro
-                if (STICK->UseFleeing && IsMobFleeing(pChSpawn, psTarget) && (psTarget->HPCurrent * 100 / psTarget->HPMax) < 25)
+                if (STICK->UseFleeing && IsMobFleeing(pLocalPlayer, psTarget) && (psTarget->HPCurrent * 100 / psTarget->HPMax) < 25)
                 {
                     MOVE->StopMove(KILL_STRAFE);
                 }
@@ -6340,22 +6329,22 @@ void MainProcess(unsigned char ucCmdUsed)
     if (STICK->Snaproll)
     {
         PolarSpot(psTarget->Y, psTarget->X, psTarget->Heading, STICK->Snap->Bearing, STICK->DistSnap, 0.0f, &STICK->Snap->Y, &STICK->Snap->X); // calculate location we want
-        STICK->Snap->CurDist = fabs(GetDistance(pChSpawn->Y, pChSpawn->X, STICK->Snap->Y, STICK->Snap->X)); // get distance from that location
+        STICK->Snap->CurDist = fabs(GetDistance(pLocalPlayer->Y, pLocalPlayer->X, STICK->Snap->Y, STICK->Snap->X)); // get distance from that location
 
         // 3D problems when levitated
-        //STICK->Snap->CurDist = fabs(GetDistance3D(pChSpawn->Y, pChSpawn->X, pChSpawn->Z, STICK->Snap->Y, STICK->Snap->X, psTarget->Z)); // get distance from that location
+        //STICK->Snap->CurDist = fabs(GetDistance3D(pLocalPlayer->Y, pLocalPlayer->X, pLocalPlayer->Z, STICK->Snap->Y, STICK->Snap->X, psTarget->Z)); // get distance from that location
 
         if (STICK->Snap->CurDist <= 5.0f) // if distance is close enough on first pass, no need to snaproll, this also breaks in future pulses
         {
             MOVE->StopMove(APPLY_TO_ALL);
             STICK->Snaproll      = false;
             STICK->On = bStickOn = true;
-            MOVE->NewHead(MOVE->SaneHead(atan2(psTarget->X - pChSpawn->X, psTarget->Y - pChSpawn->Y) * HEADING_HALF / fPI));
+            MOVE->NewHead(MOVE->SaneHead(atan2(psTarget->X - pLocalPlayer->X, psTarget->Y - pLocalPlayer->Y) * HEADING_HALF / fPI));
             STICK->NewSnaproll();
             return;
         }
         // determine heading to that location
-        STICK->Snap->Head = MOVE->SaneHead((atan2(STICK->Snap->X - pChSpawn->X, STICK->Snap->Y - pChSpawn->Y) * HEADING_HALF) / fPI);
+        STICK->Snap->Head = MOVE->SaneHead((atan2(STICK->Snap->X - pLocalPlayer->X, STICK->Snap->Y - pLocalPlayer->Y) * HEADING_HALF) / fPI);
         MOVE->NewHead(STICK->Snap->Head);
         // start movement
         if (STICK->Snap->CurDist > 5.0f)
@@ -6381,7 +6370,7 @@ void MainProcess(unsigned char ucCmdUsed)
     if (STICK->MoveBack)
     {
         // if not stick healer, stop movement if we are not within one turn of heading
-        if (!STICK->Healer && fabs(pChSpawn->Heading - fNewHeading) > 14.0f)
+        if (!STICK->Healer && fabs(pLocalPlayer->Heading - fNewHeading) > 14.0f)
         {
             MOVE->StopMove(KILL_FB);
             return;
@@ -7084,11 +7073,9 @@ void LoadConfig()
 {
     char szTemp[MAX_STRING]     = {0};
     bool bRewriteIni            = false; // re-save if bad values were read
-    float fArg = 0.0f;
-    unsigned int uiArg = 0;
 
     // default settings
-    fArg = GetPrivateProfileFloat("Defaults", "AllowMove", SET->AllowMove, INIFileName);
+	float fArg = GetPrivateProfileFloat("Defaults", "AllowMove", SET->AllowMove, INIFileName);
     if (fArg >= 10.0f)
     {
         SET->AllowMove = fArg;
@@ -7526,7 +7513,7 @@ void LoadConfig()
         bRewriteIni = true;
     }
 
-    uiArg = static_cast<unsigned int>(GetPrivateProfileInt("StuckLogic", "PulseCheck", STUCK->Check, INIFileName));
+    unsigned int uiArg = static_cast<unsigned int>(GetPrivateProfileInt("StuckLogic", "PulseCheck", STUCK->Check, INIFileName));
     if (uiArg > 1)
     {
         STUCK->Check = uiArg;
